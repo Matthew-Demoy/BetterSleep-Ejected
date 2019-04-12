@@ -1,0 +1,34 @@
+{
+  "email": "mattdabom5@gmail.com",
+  "weight": 165,
+  "age": 22,
+  "gender": "M",
+  "height": 72,
+  "martialStatus": "Single",
+  "sleep habit": "stays up too late",
+  "children" : 4,
+  "journals": [
+    "journal1": {
+      "text": "i slept well",
+      "date": "2019-03-16",
+      "nutrition": true,
+      "exercise": true,
+      "emotion": 2
+    },
+    "journal2": {
+      "text": "i slept poorly",
+      "date": "2019-03-15",
+      "nutrition": true,
+      "exercise": true,
+      "emotion": 1
+    },
+    "journal3": {
+      "text": "i slept well",
+      "date": "2019-03-13",
+      "nutrition": false,
+      "exercise": true,
+      "emotion": 3
+    }
+  ]
+}
+
