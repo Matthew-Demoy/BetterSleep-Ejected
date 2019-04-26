@@ -59,6 +59,7 @@
 		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
 		B15A1F22DF2C40A7AC86B759 /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2B41EEFC2D1145379163E2C1 /* Ionicons.ttf */; };
 		C97E56742271FB7F00CCC8CC /* libRCTPushNotification.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C97E56532271FB3100CCC8CC /* libRCTPushNotification.a */; };
+		C97E567B2273031E00CCC8CC /* libSplashScreen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C97E567A2273030700CCC8CC /* libSplashScreen.a */; };
 		C9CC61F7226CBD39006D0D9C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C9CC61F6226CBD39006D0D9C /* GoogleService-Info.plist */; };
 		D1C539664E35A467E2EE5A6C /* libPods-BetterSleep-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D5626C9A566A03642EDC1D7F /* libPods-BetterSleep-tvOS.a */; };
 		ED297163215061F000B7C4FE /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED297162215061F000B7C4FE /* JavaScriptCore.framework */; };
@@ -335,6 +336,13 @@
 			remoteGlobalIDString = 3D05745F1DE6004600184BB4;
 			remoteInfo = "RCTPushNotification-tvOS";
 		};
+		C97E56792273030700CCC8CC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C97E56752273030700CCC8CC /* SplashScreen.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3D7682761D8E76B80014119E;
+			remoteInfo = SplashScreen;
+		};
 		C9D6683522601D6700FB8E4D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 146833FF1AC3E56700842450 /* React.xcodeproj */;
@@ -448,6 +456,7 @@
 		C3D77F400B094677B03A618C /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
 		C92035D42269518200DDDF2C /* BetterSleep.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = BetterSleep.entitlements; path = BetterSleep/BetterSleep.entitlements; sourceTree = "<group>"; };
 		C97E56412271FB3000CCC8CC /* RCTPushNotification.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTPushNotification.xcodeproj; path = "../node_modules/react-native/Libraries/PushNotificationIOS/RCTPushNotification.xcodeproj"; sourceTree = "<group>"; };
+		C97E56752273030700CCC8CC /* SplashScreen.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SplashScreen.xcodeproj; path = "../node_modules/react-native-splash-screen/ios/SplashScreen.xcodeproj"; sourceTree = "<group>"; };
 		C9CC61CA226CBCB7006D0D9C /* ios */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ios; sourceTree = "<group>"; };
 		C9CC61F6226CBD39006D0D9C /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D05FE5C3427F4BB7B96DBAA5 /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Brands.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; };
@@ -477,6 +486,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C97E567B2273031E00CCC8CC /* libSplashScreen.a in Frameworks */,
 				C97E56742271FB7F00CCC8CC /* libRCTPushNotification.a in Frameworks */,
 				ED297163215061F000B7C4FE /* JavaScriptCore.framework in Frameworks */,
 				ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */,
@@ -705,6 +715,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				C97E56752273030700CCC8CC /* SplashScreen.xcodeproj */,
 				C97E56412271FB3000CCC8CC /* RCTPushNotification.xcodeproj */,
 				5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */,
 				146833FF1AC3E56700842450 /* React.xcodeproj */,
@@ -799,6 +810,14 @@
 			children = (
 				C97E56532271FB3100CCC8CC /* libRCTPushNotification.a */,
 				C97E56552271FB3100CCC8CC /* libRCTPushNotification-tvOS.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C97E56762273030700CCC8CC /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C97E567A2273030700CCC8CC /* libSplashScreen.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1027,6 +1046,10 @@
 				{
 					ProductGroup = C9D6683F22601D6700FB8E4D /* Products */;
 					ProjectRef = A862A22C22C34C569A67F7A7 /* RNVectorIcons.xcodeproj */;
+				},
+				{
+					ProductGroup = C97E56762273030700CCC8CC /* Products */;
+					ProjectRef = C97E56752273030700CCC8CC /* SplashScreen.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -1290,6 +1313,13 @@
 			fileType = archive.ar;
 			path = "libRCTPushNotification-tvOS.a";
 			remoteRef = C97E56542271FB3100CCC8CC /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		C97E567A2273030700CCC8CC /* libSplashScreen.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libSplashScreen.a;
+			remoteRef = C97E56792273030700CCC8CC /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		C9D6683622601D6700FB8E4D /* libjsi.a */ = {
@@ -1676,6 +1706,7 @@
 					"/Users/matt/Document/BetterSleepAndroid/node_modules/react-native-firebase/ios/RNFirebase/**",
 					"${PODS_ROOT}/Headers/Public",
 					"${PODS_ROOT}/Firebase/CoreOnly/Sources",
+					"$(SRCROOT)/../node_modules/react-native-splash-screen/ios",
 				);
 				INFOPLIST_FILE = BetterSleep/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1712,6 +1743,7 @@
 					"/Users/matt/Document/BetterSleepAndroid/node_modules/react-native-firebase/ios/RNFirebase/**",
 					"${PODS_ROOT}/Headers/Public",
 					"${PODS_ROOT}/Firebase/CoreOnly/Sources",
+					"$(SRCROOT)/../node_modules/react-native-splash-screen/ios",
 				);
 				INFOPLIST_FILE = BetterSleep/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

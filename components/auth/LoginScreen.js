@@ -3,6 +3,7 @@ import React from 'react';
 import { StyleSheet, View, Text, TextInput, Button, Alert, Image } from 'react-native';
 import { NavigationActions, StackActions} from 'react-navigation';
 import * as firebase from 'firebase';
+import SplashScreen from 'react-native-splash-screen'
 
 
 export default class LoginScreen extends React.Component {
@@ -16,6 +17,9 @@ export default class LoginScreen extends React.Component {
         };
     }
 
+    componentDidMount(){
+        SplashScreen.hide();
+    }
     onLoginPress = () => {
         console.log("logging in " + this.state.email)
         firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)

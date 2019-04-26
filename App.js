@@ -5,9 +5,10 @@ import currentEntries from './reducers/Journal'
 import JournalNav from './containers/JournalNav'
 import * as firebaseSDK from 'firebase';
 import firebase from 'react-native-firebase';
-import { Platform, StyleSheet, Text, View, Alert, AsyncStorage } from 'react-native';
+import { Platform, StyleSheet, Text, View, Image, AsyncStorage } from 'react-native';
 import PushNotification from 'react-native-push-notification';
 import PushNotificationIOS from 'PushNotificationIOS'
+import Onboarding from 'react-native-onboarding-swiper';
 //import { AppLoading, Asset, Font } from 'expo';
 //import { Ionicons } from '@expo/vector-icons';
 import RootNavigation from './navigation/RootNavigation';
@@ -53,12 +54,14 @@ export default class App extends Component {
       isLoadingComplete: false,
       isAuthenticationReady: false,
       isAuthenticated: false,
+      firstTime: null
     };
     
     // Initialize firebase...
     if (!firebaseSDK.apps.length) { firebaseSDK.initializeApp(ApiKeys.FirebaseConfig); }
     firebaseSDK.auth().onAuthStateChanged(this.onAuthStateChanged);
-    this.dailyNotification()
+
+    this._retrieveFirstTime()
   }
 
   onAuthStateChanged = (user) => {
@@ -68,6 +71,7 @@ export default class App extends Component {
   }
 
   async componentDidMount() {
+    
     this.checkPermission();
     this.createNotificationListeners(); //add this line
   }
@@ -75,6 +79,38 @@ export default class App extends Component {
   componentWillUnmount() {
     this.notificationListener;
     this.notificationOpenedListener;
+  }
+
+  _retrieveFirstTime = async () => {
+    console.log("getting first time info")
+    
+    try {
+      const value = await AsyncStorage.getItem('FIRSTTIME');
+      if (value === 'false') {
+        // We have data!!
+        console.log("retrieved async firstime" + value)
+        this.setState({firstTime: 'false'})
+      }
+      else {
+        this.setState({firstTime: 'true'})
+        console.log("new user")
+      }
+    } catch (error) {
+      // Error retrieving data
+    }
+
+    try {
+      await AsyncStorage.setItem('FIRSTTIME', 'false');
+      
+    } catch (error) {
+      // Error saving data
+    }
+  }
+
+  _onDone = () => {
+    // User finished the introduction. Show real app through
+    // navigation or simply by controlling state
+    this.setState({ firstTime: false });
   }
 
   async checkPermission() {
@@ -183,6 +219,37 @@ export default class App extends Component {
 
       return (
 
+        (this.state.firstTime === 'true') ?
+        <Onboarding
+        onDone = {this._onDone}
+        pages={[
+          {
+            backgroundColor: '#fff',
+            image: <Image source={require('./assets/images/appicon.png')} />,
+            title: 'Welcome to Better Sleep',
+            subtitle: 'Here is a quick guide to use the app',
+          },
+          {
+            backgroundColor: '#fe6e58',
+            image: <Image source={require('./assets/images/Tabs.png')} />,
+            title: 'Learn',
+            subtitle: 'Use the Nutrition and Exercise Tab to Get the Latest and Greatest Sleep Information',
+          },
+          {
+            backgroundColor: '#999',
+            image: <Image source={require('./assets/images/calendar.png')} />,
+            title: 'Act',
+            subtitle: "Apply these tips to your sleep routine",
+          },
+          {
+            backgroundColor: '#999',
+            image: <Image source={require('./assets/images/journal.png')} />,
+            title: 'Track',
+            subtitle: "Track your sleep in your own journal and watch your sleep improve day by day!",
+          },
+          
+        ]}
+      />:
           (this.state.isAuthenticated) ? 
           <Provider store={store}>
             <JournalNav /> 
@@ -194,31 +261,7 @@ export default class App extends Component {
       
     }
 
-    dailyNotification() {
-      /*
-      if( Platform.OS === 'android')
-      {
-        PushNotification.localNotificationSchedule({
-          date: new Date(Date.now() + (5 * 1000)),
-          id: '33133',
-          message: "Hello Youtube", // (required)
-          userInfo: { id: '123' }
-        })
-      }
-      else
-      {
-        PushNotificationIOS.scheduleLocalNotification({
-          fireDate: new Date(Date.now() + (5 * 1000)),
-          alertTitle: "do it",
-          alertBody: "checking in on ya",
-          repeatInterval: "minute"
-        });
-      }
-      */
 
-      //PushNotification.cancelLocalNotifications({id:'33133'});
-      //PushNotificationIOS.cancelLocalNotifications();
-    }
     
     cancelAll() {
       PushNotification.cancelAllLocalNotifications();

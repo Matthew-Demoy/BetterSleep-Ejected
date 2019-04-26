@@ -25,8 +25,20 @@ class Journal extends React.Component{
 
       componentDidMount() {
         this.listenForItems(this.itemsRef)
+        this._onBoardComplete()
       
       }
+
+      _onBoardComplete = async () => {
+        console.log("finishing onboarding ")
+        try {
+          await AsyncStorage.setItem('FIRSTTIME', 'false');
+          
+        } catch (error) {
+          // Error saving data
+        }
+        console.log("onboarding finish")
+      };
 
       listenForItems(itemsRef) {
         itemsRef.on('value', (snap) => {
