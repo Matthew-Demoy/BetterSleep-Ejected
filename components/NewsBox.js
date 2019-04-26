@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, StyleSheet, Text, TouchableOpacity, FlatList } from 'react-native'
+import { View, StyleSheet, Text, TouchableOpacity, FlatList, Platform } from 'react-native'
 import { FontAwesome, 
   MaterialIcons,
   MaterialCommunityIcons 
@@ -11,13 +11,23 @@ class NewsBox extends React.PureComponent {
   _onPress = () => {
     this.props.onPressItem(this.props.id);
   };
+  
+
   render() {
+    if(Platform.OS == 'android')
+    {
+      title = this.props.FigurativeTitle
+    }
+    else
+    {
+      title = this.props.LiteralTitle
+    }
     return (
       <View style={styles.outerBox}>
         <TouchableOpacity style={styles.roundBox} onPress={this._onPress}>
           <View style={{ borderColor: 'white'}}>
             <View style={[styles.row, {marginTop:12}]}>
-                <Text style={{fontSize:30}}>{this.props.Title}</Text>
+                <Text style={{fontSize:30}}>{title}</Text>
               </View>
               <Text style={styles.journalText}>{this.props.Description}</Text>
             </View>
@@ -56,8 +66,9 @@ export class NewsBoxList extends React.PureComponent {
   _renderItem = ({item}) => (
 
     <NewsBox
-      Title={item.Title}
-      Description={item.Description}
+      FigurativeTitle={item.FigurativeTitle}
+      LiteralTitle={item.LiteralTitle}
+      Description={item.Content}
       onPressItem={this._onPressItem}
       selected={!!this.state.selected.get(item.id)}
     />
@@ -65,8 +76,9 @@ export class NewsBoxList extends React.PureComponent {
 
 
   render() {
-
+    
     return (
+
       <FlatList
         data={this.props.data}
         extraData={this.state.selected}

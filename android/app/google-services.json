@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "171151378378",
+    "firebase_url": "https://bettersleep-1287e.firebaseio.com",
+    "project_id": "bettersleep-1287e",
+    "storage_bucket": "bettersleep-1287e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:171151378378:android:6d3f4989a3568dc0",
+        "android_client_info": {
+          "package_name": "com.matthewdemoy.bettersleep"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "171151378378-klj21usun1mb3gj6o216mlkco5feccpr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxWKTKdoOVqdc9txekhvlYOY9az1Gw0T8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "171151378378-klj21usun1mb3gj6o216mlkco5feccpr.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "171151378378-8c2ookktkrig1jivpa7do5cordurv3nr.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.MatthewDemoy.BetterSleep"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -42,13 +42,9 @@ class Journal extends React.Component{
               date: child.val().date,
               id: child.key
             });
-            console.log("snap " + child.val().didExercise,)
           });
         
           entries.sort(function(a,b){
-            console.log("sort")
-            console.log(b.date)
-            console.log(a.date)
             return new Date(b.date) - new Date(a.date) })
     
           this.setState({
@@ -66,7 +62,6 @@ class Journal extends React.Component{
         ref.on("value" , snapshot => {
           var entries = []
             snapshot.forEach(function(child){
-                console.log("in this bitch")
                 entries.push({
                   journal: child.text,
                   didExercise: child.exercise,
@@ -75,20 +70,15 @@ class Journal extends React.Component{
                   date: child.val().date,
                   id: child.val().date
               });
-              console.log(entries)
               return entries
             });
           })
 
-        
-        console.log("ref 2 " + JSON.stringify(entries))
-        console.log("ref " + Object.keys(entries))
         //this.props.data[0].journal
         return entries
       }
       
     render(){
-      console.log("props" + Object.keys(this.props.entries))
         return(
             <View>
                 {/*We pass in an array of entry objects to a function called metric card.

@@ -1,5 +1,5 @@
 import React from 'react'
-import {StyleSheet, TouchableOpacity,ScrollView, View, Button, Text, Switch, TextInput, Alert, KeyboardAvoidingView} from 'react-native'
+import {StyleSheet, TouchableOpacity,ScrollView, View, Button, Text, Switch, TextInput, Alert, KeyboardAvoidingView, AsyncStorage} from 'react-native'
 import {AddEntry, EditEntry, DeleteEntry} from '../actions/JournalActions'
 import {connect} from 'react-redux'
 
@@ -37,6 +37,7 @@ class JournalEntry extends React.Component{
 
   componentDidMount() {
     this.props.navigation.setParams({ options: this.options.bind(this.state.itemId) });
+    this.listenForItems(this.getItemsRef)
   }
 
 
@@ -44,58 +45,57 @@ class JournalEntry extends React.Component{
     // So we must temporarily hold this information when making a new entry
     constructor (props) {
       super(props)
+      
       date = new Date()
 
       if(date.getMonth() + 1 < 10)
+      {
+        if(date.getDate() < 10)
         {
-          if(date.getDate() < 10)
-          {
-            selectedDate = date.getFullYear() + "-0"+ parseInt(date.getMonth() + 1) +"-0"+ date.getDate()
-          }
-          else
-          {
-            selectedDate = date.getFullYear() + "-0"+ parseInt(date.getMonth() + 1) +"-"+ date.getDate()
-          }
+          selectedDate = date.getFullYear() + "-0"+ parseInt(date.getMonth() + 1) +"-0"+ date.getDate()
         }
-        else{
-          if(date.getDate() < 10)
-          {
-            selectedDate = date.getFullYear() + "-"+ parseInt(date.getMonth() + 1) +"-0"+ date.getDate()
-          }
-          else
-          {
-            selectedDate = date.getFullYear() + "-"+ parseInt(date.getMonth() + 1) +"-"+ date.getDate()
-          }
+        else
+        {
+          selectedDate = date.getFullYear() + "-0"+ parseInt(date.getMonth() + 1) +"-"+ date.getDate()
         }
-        
+      }
+      else{
+        if(date.getDate() < 10)
+        {
+          selectedDate = date.getFullYear() + "-"+ parseInt(date.getMonth() + 1) +"-0"+ date.getDate()
+        }
+        else
+        {
+          selectedDate = date.getFullYear() + "-"+ parseInt(date.getMonth() + 1) +"-"+ date.getDate()
+        }
+      }
+
       itemId = this.props.navigation.getParam('id')
       journals = this.props.navigation.getParam('data')
       this.journals = journals
       
       var user = firebase.auth().currentUser
       
-      console.log("lowell")
       if(itemId !== undefined)
       {
         data = journals.find(obj => { return obj.id === itemId });
         console.log("data " + Object.keys(data)[0]) 
         userLocation = "users/" + user.uid + "/journals/" + data.id
+        this.sendItemsRef = firebase.database().ref(userLocation);
       }
       else{ 
-        data = this.props.entries.find(obj => { return obj.date === selectedDate });
         newId = guidGenerator()
         userLocation = "users/" + user.uid + "/journals/" + newId
+        this.sendItemsRef = firebase.database().ref(userLocation);
       }
-      console.log("lo")
-      this.itemsRef = firebase.database().ref(userLocation);
-        
-
+      
+      this.getItemsRef = firebase.database().ref("users/" + user.uid + "/journals");
       if(itemId === undefined)
       {
         itemId = -1
         const defaultExercise = this.props.dailyExercise
         const defaultNutrition = this.props.dailyNutrition
-
+        
           this.state = {
             text: "",
             height: 0,
@@ -104,15 +104,14 @@ class JournalEntry extends React.Component{
             didExercise: defaultExercise,
             date: selectedDate,
             isDateTimePickerVisible: false,
-            itemId : newId
+            itemId : newId,
+            entries: null
           
         }
       }
       else
       {
-        console.log("initState")
-        console.log(data.journal)
-        console.log(data.dailyNutrition)
+
         this.state = {
           text :  data.journal,
           height: 0,
@@ -121,10 +120,82 @@ class JournalEntry extends React.Component{
           didExercise : data.didExercise,
           date : data.date,
           isDateTimePickerVisible: false,
-          itemId : data.id
+          itemId : data.id,
+          entries: null
         }
       }
       
+    }
+    /*
+    adjustdate = () => {
+      initDateRecent = false
+      date = new Date()
+      while(initDateRecent === false)
+      {
+        if(date - this.state.mostRecent <= 0)
+        {
+          console.log("adding a day")
+          date = new Date(date.getTime() + 60 * 60 * 24 * 1000)
+        }
+        else
+        {
+          initDateRecent = true
+        }
+      }
+      this.setState({date:this.dashedString(date)})
+    }
+    */
+   
+    dashedString = (date) => {
+      if(date.getMonth() + 1 < 10)
+      {
+        if(date.getDate() < 10)
+        {
+          selectedDate = date.getFullYear() + "-0"+ parseInt(date.getMonth() + 1) +"-0"+ date.getDate()
+        }
+        else
+        {
+          selectedDate = date.getFullYear() + "-0"+ parseInt(date.getMonth() + 1) +"-"+ date.getDate()
+        }
+      }
+      else{
+        if(date.getDate() < 10)
+        {
+          selectedDate = date.getFullYear() + "-"+ parseInt(date.getMonth() + 1) +"-0"+ date.getDate()
+        }
+        else
+        {
+          selectedDate = date.getFullYear() + "-"+ parseInt(date.getMonth() + 1) +"-"+ date.getDate()
+        }
+      }
+      console.log(selectedDate)
+      return selectedDate
+    }
+
+    listenForItems(itemsRef) {
+      itemsRef.on('value', (snap) => {
+  
+        // get children as an array
+        var entries = [];
+        snap.forEach((child) => {
+          entries.push({
+            journal: child.val().text,
+            didExercise: child.val().didExercise,
+            didNutrition: child.val().didNutrition,
+            grade: child.val().emotion,
+            date: child.val().date,
+            id: child.key
+          });
+        });
+      
+        entries.sort(function(a,b){
+          return new Date(b.date) - new Date(a.date) })
+  
+        this.setState({
+          entries: entries
+        });
+  
+      });
     }
 
     onLousyButtonPrs = () => {
@@ -172,6 +243,9 @@ class JournalEntry extends React.Component{
     submit = (itemId) => {
       console.log("submit")
       console.log(itemId)
+
+      this._storeMostRecent()
+
       if (itemId === -1)
       {
         key = 0
@@ -182,8 +256,8 @@ class JournalEntry extends React.Component{
             key = key + 1
           }
         }
-        
-        this.itemsRef.push({ 
+
+        this.sendItemsRef.push({ 
           text: this.state.text,
           didExercise: this.state.didExercise,
           didNutrition: this.state.didNutrition,
@@ -191,23 +265,12 @@ class JournalEntry extends React.Component{
           date: this.state.date,
           id : this.state.itemId,
         })
-
-        /*
-        this.props.dispatch(AddEntry(
-          this.state.text,
-          this.state.didExercise,
-          this.state.didNutrition,
-          this.state.grade,
-          this.state.date,
-          key,
-        ))
-        */
       }
       else
       {
-        console.log(this.state.date)
 
-        this.itemsRef.update({
+        console.log("updating ref")
+        this.sendItemsRef.update({
           text: this.state.text,
           didExercise: this.state.didExercise,
           didNutrition: this.state.didNutrition,
@@ -215,16 +278,6 @@ class JournalEntry extends React.Component{
           date: this.state.date,
           id : itemId,
         })
-        /*
-        this.props.dispatch(EditEntry(
-          this.state.text,
-          this.state.didExercise,
-          this.state.didNutrition,
-          this.state.grade,
-          this.state.date,
-          itemId,
-        ))
-        */
       }
       this.props.navigation.pop()
       this.props.navigation.navigate('Journal')
@@ -278,7 +331,7 @@ class JournalEntry extends React.Component{
       console.log(this.state.itemId)
       if (itemId != -1)
       {
-        this.itemsRef.remove();
+        this.sendItemsRef.remove();
         this.props.dispatch(DeleteEntry(
           this.state.itemId
         ))
@@ -316,14 +369,17 @@ class JournalEntry extends React.Component{
         
       }
 
-      if(this.journals !== undefined)
+      console.log("checking journals1")
+      if(this.state.entries !== undefined)
       {
-        data = this.journals.find(obj => { 
+        console.log("checking journals")
+        data = this.state.entries.find(obj => { 
           console.log(obj.date)
           console.log(selectedDate)
           return obj.date === selectedDate});
       }
       
+      console.log("selected date for new entry" + selectedDate)
       if( data !== undefined )
       {
         setTimeout(() => {

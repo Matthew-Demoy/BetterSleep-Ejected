@@ -7,6 +7,7 @@ import UserSettings from './UserSettings'
 
 import * as firebase from 'firebase';
 import { NavigationEvents } from 'react-navigation';
+import {Schedule} from './reminders'
 
 
 
@@ -53,6 +54,8 @@ class Profile extends React.Component{
                 <View style={{paddingTop:10}} />
                 <StatBox/>
                 <View style={{paddingTop:10}} />
+
+                <Schedule/>
                 <TouchableOpacity style={{borderWidth:1, paddingVertical:15}} onPress={this.onSettingsPress}>
                     <Text style={{alignSelf:'center', fontSize:20}}>Settings</Text>
                 </TouchableOpacity>

@@ -3,11 +3,12 @@ import React from 'react';
 import JournalEntry from '../components/JournalEntry';
 import Journal from '../components/Journal';
 import Profile from '../components/Profile';
-import Exercise from '../components/Exercise';
-import Nutrition from '../components/Nutrition';
+import Information from '../components/Information';
+import Tips from '../components/Tips';
 import UserSettings from '../components/UserSettings';
 
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Entypo from 'react-native-vector-icons/Entypo'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -53,10 +54,10 @@ JournalNavigator.navigationOptions = ({ navigation }) => {
   };
 };
   
-const ExerciseNavigator = createStackNavigator(
+const InformationNavigator = createStackNavigator(
   {
-    Exercise: {
-        screen: Exercise
+    Information: {
+        screen: Information
     },
     Entry: {
         screen: JournalEntry
@@ -70,7 +71,7 @@ const ExerciseNavigator = createStackNavigator(
           elevation: 0,
           shadowOpacity: 0
       },
-      headerTitle: <Text style={{color: 'white',fontSize : 25,}}> Exercise Tips </Text>,
+      headerTitle: <Text style={{color: 'white',fontSize : 25,}}> Sleep Information </Text>,
       headerTintColor: '#27A8E6',
       headerTitleStyle: {
           fontWeight: 'bold',
@@ -80,7 +81,7 @@ const ExerciseNavigator = createStackNavigator(
   }
 );
 
-ExerciseNavigator.navigationOptions = ({ navigation }) => {
+InformationNavigator.navigationOptions = ({ navigation }) => {
   let tabBarVisible = true;
   if (navigation.state.index > 0) {
     tabBarVisible = false;
@@ -91,10 +92,10 @@ ExerciseNavigator.navigationOptions = ({ navigation }) => {
   };
 };
 
-const NutritionNavigator = createStackNavigator(
+const TipsNavigator = createStackNavigator(
   {
-    Nutrition: {
-        screen: Nutrition
+    Tips: {
+        screen: Tips
     },
     Entry: {
         screen: JournalEntry
@@ -108,7 +109,7 @@ const NutritionNavigator = createStackNavigator(
           elevation: 0,
           shadowOpacity: 0
       },
-      headerTitle: <Text style={{color: 'white',fontSize : 25,}}> Nutrition Tips </Text>,
+      headerTitle: <Text style={{color: 'white',fontSize : 25,}}> Sleep Tips </Text>,
       headerTintColor: '#27A8E6',
       headerTitleStyle: {
           fontWeight: 'bold',
@@ -118,7 +119,7 @@ const NutritionNavigator = createStackNavigator(
   }
 );
 
-NutritionNavigator.navigationOptions = ({ navigation }) => {
+TipsNavigator.navigationOptions = ({ navigation }) => {
   let tabBarVisible = true;
   if (navigation.state.index > 0) {
     tabBarVisible = false;
@@ -172,21 +173,21 @@ ProfileNavigator.navigationOptions = ({ navigation }) => {
 
   const AppNavigator = createBottomTabNavigator({
 
-    Exercise :{
-      screen: ExerciseNavigator,
+    Information :{
+      screen: InformationNavigator,
       navigationOptions: {
-        tabBarLabel: 'Exercise',
+        tabBarLabel: 'Information',
         tabBarIcon: ({ tintColor }) => (
-          <MaterialIcons name="directions-run" size={40}/>
+          <Entypo name="news" size={40}/>
         )
       },
     },
     Nutrition :{
-      screen: NutritionNavigator,
+      screen: TipsNavigator,
       navigationOptions: {
-        tabBarLabel: 'Nutrition',
+        tabBarLabel: 'Tips',
         tabBarIcon: ({ tintColor }) => (
-          <MaterialCommunityIcons name="food-fork-drink" size={40}/>
+          <MaterialIcons name="directions-run" size={40}/>
         )
       },
     },
