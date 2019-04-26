@@ -1,5 +1,5 @@
 import React from 'react'
-import {StyleSheet, TouchableOpacity,ScrollView, View, Button, Text, Switch, TextInput, Alert, KeyboardAvoidingView, AsyncStorage} from 'react-native'
+import {StyleSheet, TouchableOpacity,ScrollView, View, Button, Text, Switch, TextInput, Alert, KeyboardAvoidingView} from 'react-native'
 import {AddEntry, EditEntry, DeleteEntry} from '../actions/JournalActions'
 import {connect} from 'react-redux'
 
@@ -145,7 +145,7 @@ class JournalEntry extends React.Component{
       this.setState({date:this.dashedString(date)})
     }
     */
-   
+
     dashedString = (date) => {
       if(date.getMonth() + 1 < 10)
       {

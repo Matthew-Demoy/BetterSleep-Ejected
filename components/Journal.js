@@ -1,5 +1,5 @@
 import React from 'react'
-import {View, Text, TouchableOpacity, StyleSheet, Platform} from 'react-native'
+import {View, Text, TouchableOpacity, StyleSheet, ActivityIndicator} from 'react-native'
 import {JournalBoxList} from './JournalBox'
 import {connect} from "react-redux";
 import PropTypes from 'prop-types';
@@ -95,7 +95,7 @@ class Journal extends React.Component{
             <View>
                 {/*We pass in an array of entry objects to a function called metric card.
                     Metric card renders the entries one by one*/}
-                {this.state.journal !== null ? <JournalBoxList data={this.state.journal} navigation={this.props.navigation}/> : <Text>Loading</Text> }
+                {this.state.journal !== null ? <JournalBoxList data={this.state.journal} navigation={this.props.navigation}/> :  <ActivityIndicator style={{justifyContent: 'center', alignItems:'center'}} size="large" color="#000000" />}
             </View>
         )
     }

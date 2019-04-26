@@ -1,5 +1,5 @@
 import React from 'react'
-import {StyleSheet, Text, View, TouchableOpacity} from 'react-native'
+import {StyleSheet, Text, View, TouchableOpacity, ActivityIndicator} from 'react-native'
 import {CompleteDailyExercise} from '../actions/ActivityActions'
 import {connect} from 'react-redux'
 import Dialog from "react-native-dialog";
@@ -94,9 +94,6 @@ class Information extends React.Component {
             <View style = {styles.centerText}>
 
                 <View style={{paddingTop:20}}></View>
-                <TouchableOpacity onPress={this.completeExercise}>
-                    <Text style={{fontSize:20}}>Press to complete daily Exercise!</Text>
-                </TouchableOpacity>
                 <Dialog.Container visible={this.state.dialogVisible} useNativeDriver={true}>
                     <Dialog.Title>Congrats Matt on completing your Exercise</Dialog.Title>
                     <Dialog.Description>
@@ -106,7 +103,7 @@ class Information extends React.Component {
                 </Dialog.Container>
 
                 <View>
-                    {this.state.information !== null ? <NewsBoxList data={this.state.information} navigation={this.props.navigation}/> :<Text>Loading</Text> }
+                    {this.state.information !== null ? <NewsBoxList data={this.state.information} navigation={this.props.navigation}/> :  <ActivityIndicator style={{justifyContent: 'center', alignItems:'center'}} size="large" color="#000000" /> }
                 </View>
             </View>
         )
