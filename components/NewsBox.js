@@ -5,7 +5,7 @@ import { FontAwesome,
   MaterialCommunityIcons 
   } from 'react-native-vector-icons'
   import PropTypes from 'prop-types';
-import CleanDate from './CleanDate'
+  import {getGradeIcon} from './util'
 
 class NewsBox extends React.PureComponent {
   _onPress = () => {
@@ -100,87 +100,8 @@ NewsBoxList.propTypes = {
     })).isRequired
 }
 
-function getExerciseIcon(didExercise){
-  if(didExercise){
-    return(
-        <View style={[styles.iconContainer]}>
-          <FontAwesome
-            name='heartbeat'
-            color='#4f83cc'
-            size={45}
-          />
-        </View>
-    )
-  }
-  return(
-      <View style={[styles.iconContainer]}>
-      <MaterialIcons
-        name='not-interested'
-        color='#4f83cc'
-        size={45}
-      />
-    </View>
-  )
-}
 
-function getNutritionIcon(didNutrition){
-  if(didNutrition){
-    return(
-        <View style={[styles.iconContainer]}>
-          <MaterialCommunityIcons
-            name='food-apple'
-            color='#4f83cc'
-            size={45}
-          />
-        </View>
-    )
-  }
-  return(
-      <View style={[styles.iconContainer]}>
-      <MaterialIcons
-        name='not-interested'
-        color='#4f83cc'
-        size={45}
-      />
-    </View>
-  )
-}
 
-function getGradeIcon(grade){
-  switch(grade){
-    case 0: 
-        return(
-          <View style={[styles.gradeContainer]}>
-            <MaterialCommunityIcons
-              name='emoticon-sad'
-              color='#4f83cc'
-              size={45}
-            />
-          </View>
-        )
-
-    case 1:
-        return(
-              <View style={[styles.gradeContainer]}>
-                <MaterialCommunityIcons
-                  name='emoticon-neutral'
-                  color='#4f83cc'
-                  size={45}
-                />
-              </View>
-            )
-    case 2:
-        return(
-          <View style={[styles.gradeContainer]}>
-            <MaterialCommunityIcons
-              name='emoticon-happy'
-              color='#4f83cc' 
-              size={45}
-            />
-          </View>
-        )
-  }
-}
 
 const styles = StyleSheet.create({
   container: {
@@ -189,6 +110,9 @@ const styles = StyleSheet.create({
     marginRight:12,
     
   },
+      gradeContainer: {
+        alignSelf : 'center'
+      },
   roundBox: {
     paddingBottom: 10,
     borderBottomWidth: 5,
@@ -207,9 +131,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginLeft: 'auto',
     alignItems: 'flex-end'
-  },
-  gradeContainer: {
-    alignItems: 'flex-start'
   },
   journalText : {
     fontSize: 18,

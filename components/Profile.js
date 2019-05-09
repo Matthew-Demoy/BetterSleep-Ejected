@@ -1,12 +1,9 @@
 import React from 'react'
-import {Text, View, ScrollView, StyleSheet, Button, TouchableOpacity} from 'react-native'
-import Dialog from "react-native-dialog";
+import {Text, View, ScrollView, StyleSheet, TouchableOpacity} from 'react-native'
 import StreakCalendar from './StreakCalendar'
 import StatBox from './StatBox'
-import UserSettings from './UserSettings'
 
 import * as firebase from 'firebase';
-import { NavigationEvents } from 'react-navigation';
 import {Schedule} from './reminders'
 
 

@@ -107,17 +107,4 @@ class StreakCalendar extends React.Component{
     }
 }
 
-function mapStateToProps (state) {
-
-  dates = []
-  console.log("mapping calendar")
-  state.entries.forEach( function(entry) {
-    console.log(entry.date)
-    dates.push(entry.date)
-  });
-
-  return {
-    entries: dates,
-  }
-}
-export default connect(mapStateToProps)(StreakCalendar)
+export default StreakCalendar

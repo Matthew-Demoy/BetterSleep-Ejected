@@ -5,42 +5,24 @@ import currentEntries from './reducers/Journal'
 import JournalNav from './containers/JournalNav'
 import * as firebaseSDK from 'firebase';
 import firebase from 'react-native-firebase';
-import { Platform, StyleSheet, Text, View, Image, AsyncStorage } from 'react-native';
+import { Image, AsyncStorage, DeviceEventEmitter } from 'react-native';
 import PushNotification from 'react-native-push-notification';
+import PushNotificationAndroid from 'react-native-push-notification';
 import PushNotificationIOS from 'PushNotificationIOS'
 import Onboarding from 'react-native-onboarding-swiper';
-//import { AppLoading, Asset, Font } from 'expo';
-//import { Ionicons } from '@expo/vector-icons';
 import RootNavigation from './navigation/RootNavigation';
 import ApiKeys from './constants/ApiKeys.js';
-
-// Some default entries for what the the user would see when opening the app
-
 state = {
-  entries : [
-      
-    ],
+
     dailyExercise: false,
     dailyNutrition: false
 }
 
-//get uuid from auth CHECK
-//use uuid for object ref CHECK
-//update redux using ref GONNA NOT USE REDUX SORRY
-//add object on signup  Done
 
-
-// only grab journals in journal view
-// only edit/add journals in newEntry (get journals passed as a prop) maybe bool if its new or edit
-// this means taking reducer like functions into journal entry
-
-// add entry
-//edit entry on actions (should pass journalid as prop to journal entry )
-//other screens need to pass info to journal entry
 
 // Initialize Firebase
 
-/* Creating a store(the internal state of the app) using the CurrentEntries Reducer(A function that tells how the store should be Update)
+/* Creating a store(the internal state of the app) using the CurrentEntries Reducer(A function that tells how the store should be Updated)
   and the default entries listed above. Refer to redux documentation to learn more about the store 
 */
 
@@ -54,7 +36,9 @@ export default class App extends Component {
       isLoadingComplete: false,
       isAuthenticationReady: false,
       isAuthenticated: false,
-      firstTime: null
+      // firstTime detects if a user should go through userO nboarding 
+      firstTime: null,
+      inputSleep: false
     };
     
     // Initialize firebase...
@@ -73,16 +57,36 @@ export default class App extends Component {
   async componentDidMount() {
     
     this.checkPermission();
-    this.createNotificationListeners(); //add this line
+    this.createNotificationListeners();
   }
+
+  componentWillMount(){
+    //This function should detect when a user clicks on a daily notification and open a window
+    (function() {
+      // Register all the valid actions for notifications here and add the action handler for each action
+      PushNotificationAndroid.registerNotificationActions(['Accept','Reject']);
+      DeviceEventEmitter.addListener('notificationActionReceived', function(action){
+        console.log ('Notification action received: ' + action);
+        const info = JSON.parse(action.dataJSON);
+        console.log("info action is " + info.action)
+        if (info.action == 'Accept') {
+          console.log("accept notification reminder")
+          this.setState({inputSleep:true})
+        } else if (info.action == 'Reject') {
+          // Do work pertaining to Reject action here
+        }
+      });
+    })();
+  }
+
 
   componentWillUnmount() {
     this.notificationListener;
     this.notificationOpenedListener;
   }
 
+  //detect if it is users first time on the app
   _retrieveFirstTime = async () => {
-    console.log("getting first time info")
     
     try {
       const value = await AsyncStorage.getItem('FIRSTTIME');
@@ -133,26 +137,6 @@ export default class App extends Component {
       
        //this.showAlert(title, body);
        alert('message');
-
-      const localNotification = new firebase.notifications.Notification({
-        sound: 'sampleaudio',
-        show_in_foreground: true,
-      })
-        .setNotificationId(notification.notificationId)
-        .setTitle(notification.title)
-        // .setSubtitle(notification.subtitle)
-        .setBody(notification.body)
-        // .setData(notification.data)
-        .android.setChannelId('fcm_default_channel') // e.g. the id you chose above
-        .android.setSmallIcon('@drawable/ic_launcher') // create this icon in Android Studio
-        .android.setColor('#000000') // you can set a color here
-        .android.setPriority(firebaseSDK.notifications.Android.Priority.High);
-        
-
-      firebaseSDK.notifications()
-        .displayNotification(localNotification)
-        .catch(err => console.error(err));
-          
     });
   
     const channel = new firebase.notifications.Android.Channel('fcm_default_channel', 'Demo app name', firebase.notifications.Android.Importance.High)
@@ -165,7 +149,6 @@ export default class App extends Component {
     * */
     this.notificationOpenedListener = firebase.notifications().onNotificationOpened((notificationOpen) => {
       const { title, body } = notificationOpen.notification;
-      //console.log('onNotificationOpened:');
       //this.showAlert(title, body);
     });
 
@@ -187,9 +170,6 @@ export default class App extends Component {
     });
   }
 
-  
-
-    //3
     async getToken() {
       let fcmToken = await AsyncStorage.getItem('fcmToken');
       if (!fcmToken) {
@@ -218,7 +198,7 @@ export default class App extends Component {
   render() {
 
       return (
-
+        //Render onBoarding if first time
         (this.state.firstTime === 'true') ?
         <Onboarding
         onDone = {this._onDone}
@@ -250,51 +230,28 @@ export default class App extends Component {
           
         ]}
       />:
-          (this.state.isAuthenticated) ? 
-          <Provider store={store}>
-            <JournalNav /> 
-          </Provider>: 
-          <Provider store={store}>
-            <RootNavigation />
-          </Provider>
+          (this.state.inputSleep) ?
+            <Button
+              onPress={this.setState({inputSleep:false})}
+              title="Learn More"
+              color="#841584"
+              accessibilityLabel="Learn more about this purple button"
+            />:
+            (this.state.isAuthenticated) ? 
+            //If user is authenticated go to journal otherwise go to login screen
+            <Provider store={store}>
+              <JournalNav /> 
+            </Provider>: 
+            <Provider store={store}>
+              <RootNavigation />
+            </Provider>
       );
       
     }
-
-
-    
+    //Cancel all active notications
     cancelAll() {
       PushNotification.cancelAllLocalNotifications();
       PushNotificationIOS.cancelLocalNotifications();
     }
-
-    /*
-  _loadResourcesAsync = async () => {
-    return Promise.all([
-      Asset.loadAsync([
-        require('./assets/images/robot-dev.png'),
-        require('./assets/images/robot-prod.png'),
-      ]),
-      Font.loadAsync({
-        // This is the font that we are using for our tab bar
-        ...Ionicons.font,
-        // We include SpaceMono because we use it in HomeScreen.js. Feel free
-        // to remove this if you are not using it in your app
-        'space-mono': require('./assets/fonts/SpaceMono-Regular.ttf'),
-      }),
-    ]);
-  };
-
-  _handleLoadingError = error => {
-    // In this case, you might want to report the error to your error
-    // reporting service, for example Sentry
-    console.warn(error);
-  };
-
-  _handleFinishLoading = () => {
-    this.setState({ isLoadingComplete: true });
-  };
-
-  */
 }
 

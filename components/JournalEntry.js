@@ -1,21 +1,26 @@
 import React from 'react'
 import {StyleSheet, TouchableOpacity,ScrollView, View, Button, Text, Switch, TextInput, Alert, KeyboardAvoidingView} from 'react-native'
-import {AddEntry, EditEntry, DeleteEntry} from '../actions/JournalActions'
-import {connect} from 'react-redux'
+import {DeleteEntry} from '../actions/JournalActions'
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 
 import DateTimePicker from 'react-native-modal-datetime-picker';
+import DatePicker from 'react-native-datepicker'
 import CleanDate from './CleanDate'
 import * as firebase from 'firebase';
+import {connect} from 'react-redux'
 
-import {guidGenerator} from './GenerateId'
+import {guidGenerator, getGradeIcon} from './util'
 
 // The JournalEntry screen is where users will create a new journal entry
 // It takes in a number of inputs from the user then sends that information to the store
+// Sorry about the spaghetti code essentialy this component has to deal with both creating a new entry and editing old ones
+// So essentially there is a branch in just about every functioning depending on if it is the former or latter
+
 class JournalEntry extends React.Component{
 
+  // Adds options button and exit in the header of the app
   static navigationOptions = ({ navigation }) => {
     // headerTitle instead of title
     return {
@@ -42,33 +47,13 @@ class JournalEntry extends React.Component{
 
 
     // Each Journal Entry is composed of 4 Parts(text,grade,didNutrition,didExercise) 
-    // So we must temporarily hold this information when making a new entry
+    // So we must temporarily hold this information when making a new entry or editing one
+    // The constructor figures out if it is making a new or editing an entry and then setting the state accordingly
     constructor (props) {
       super(props)
       
       date = new Date()
-
-      if(date.getMonth() + 1 < 10)
-      {
-        if(date.getDate() < 10)
-        {
-          selectedDate = date.getFullYear() + "-0"+ parseInt(date.getMonth() + 1) +"-0"+ date.getDate()
-        }
-        else
-        {
-          selectedDate = date.getFullYear() + "-0"+ parseInt(date.getMonth() + 1) +"-"+ date.getDate()
-        }
-      }
-      else{
-        if(date.getDate() < 10)
-        {
-          selectedDate = date.getFullYear() + "-"+ parseInt(date.getMonth() + 1) +"-0"+ date.getDate()
-        }
-        else
-        {
-          selectedDate = date.getFullYear() + "-"+ parseInt(date.getMonth() + 1) +"-"+ date.getDate()
-        }
-      }
+      selectedDate = this.dashedString(date)
 
       itemId = this.props.navigation.getParam('id')
       journals = this.props.navigation.getParam('data')
@@ -105,7 +90,9 @@ class JournalEntry extends React.Component{
             date: selectedDate,
             isDateTimePickerVisible: false,
             itemId : newId,
-            entries: null
+            entries: null,
+            bedTime: new Date(),
+            wakeTime: new Date()
           
         }
       }
@@ -121,30 +108,12 @@ class JournalEntry extends React.Component{
           date : data.date,
           isDateTimePickerVisible: false,
           itemId : data.id,
-          entries: null
+          entries: null,
+          bedTime: data.bedTime,
+          wakeTime: data.wakeTime
         }
       }
-      
     }
-    /*
-    adjustdate = () => {
-      initDateRecent = false
-      date = new Date()
-      while(initDateRecent === false)
-      {
-        if(date - this.state.mostRecent <= 0)
-        {
-          console.log("adding a day")
-          date = new Date(date.getTime() + 60 * 60 * 24 * 1000)
-        }
-        else
-        {
-          initDateRecent = true
-        }
-      }
-      this.setState({date:this.dashedString(date)})
-    }
-    */
 
     dashedString = (date) => {
       if(date.getMonth() + 1 < 10)
@@ -168,7 +137,6 @@ class JournalEntry extends React.Component{
           selectedDate = date.getFullYear() + "-"+ parseInt(date.getMonth() + 1) +"-"+ date.getDate()
         }
       }
-      console.log(selectedDate)
       return selectedDate
     }
 
@@ -184,7 +152,7 @@ class JournalEntry extends React.Component{
             didNutrition: child.val().didNutrition,
             grade: child.val().emotion,
             date: child.val().date,
-            id: child.key
+            id: child.key,
           });
         });
       
@@ -240,11 +208,14 @@ class JournalEntry extends React.Component{
       })
     }
 
+    //When the user is ready to commit a change to their journal
+    // they either PUSH new entry or UPDATE an old one
+    // Then the app navigates back to the previous screen
     submit = (itemId) => {
       console.log("submit")
       console.log(itemId)
 
-      this._storeMostRecent()
+      //this._storeMostRecent()
 
       if (itemId === -1)
       {
@@ -264,6 +235,8 @@ class JournalEntry extends React.Component{
           emotion: this.state.grade,
           date: this.state.date,
           id : this.state.itemId,
+          bedTime: this.state.bedTime,
+          wakeTime: this.state.wakeTime
         })
       }
       else
@@ -277,6 +250,8 @@ class JournalEntry extends React.Component{
           emotion: this.state.grade,
           date: this.state.date,
           id : itemId,
+          bedTime: "[placeholder]",
+          wakeTime: "[placeholder]"
         })
       }
       this.props.navigation.pop()
@@ -344,30 +319,7 @@ class JournalEntry extends React.Component{
     _hideDateTimePicker = () => this.setState({ isDateTimePickerVisible: false });
   
     _handleDatePicked = (date) => {
-
-      if(date.getMonth() + 1 < 10)
-      {
-        if(date.getDate() < 10)
-        {
-          selectedDate = date.getFullYear() + "-0"+ parseInt(date.getMonth() + 1) +"-0"+ date.getDate()
-        }
-        else
-        {
-          selectedDate = date.getFullYear() + "-0"+ parseInt(date.getMonth() + 1) +"-"+ date.getDate()
-        }
-        
-      }
-      else{
-        if(date.getDate() < 10)
-        {
-          selectedDate = date.getFullYear() + "-"+ parseInt(date.getMonth() + 1) +"-0"+ date.getDate()
-        }
-        else
-        {
-          selectedDate = date.getFullYear() + "-"+ parseInt(date.getMonth() + 1) +"-"+ date.getDate()
-        }
-        
-      }
+      selectedDate = this.dashedString(date)
 
       console.log("checking journals1")
       if(this.state.entries !== undefined)
@@ -414,7 +366,10 @@ class JournalEntry extends React.Component{
                 />
 
                 <View style={{alignSelf:'center'}}>
-                {getGradeIcon(this.state.grade)}
+                <View style={{alignSelf:'center'}}>
+                  {getGradeIcon(this.state.grade)}
+                </View>
+          
                 <Text style={styles.basicText}>How was your day?</Text>
                 </View>
                 <View style={styles.row}>
@@ -447,6 +402,33 @@ class JournalEntry extends React.Component{
                   }}>
                   
                 </TextInput>
+
+                <View styles={styles.row}>
+                    <Text>When did you wake up?</Text>
+                    <DatePicker
+                        style={{width: 200}}
+                        date={this.state.wakeTime}
+                        mode="time"
+                        format="HH:mm"
+                        confirmBtnText="Confirm"
+                        cancelBtnText="Cancel"
+                        minuteInterval={10}
+                        onDateChange={(time) => {this.setState({wakeTime:time})}}
+                    />
+
+                    <Text>When did you go to sleep?</Text>
+                    <DatePicker
+                        style={{width: 200}}
+                        date={this.state.bedTime}
+                        mode="time"
+                        format="HH:mm"
+                        confirmBtnText="Confirm"
+                        cancelBtnText="Cancel"
+                        minuteInterval={10}
+                        onDateChange={(time) => {this.setState({bedTime:time})}}
+                    />
+                </View>
+
                 <Button
                   title="Submit"
                   color="#27A8E6"
@@ -464,47 +446,10 @@ class JournalEntry extends React.Component{
 function mapStateToProps (state) {
   console.log(state.dailyExercise)
   return {
-    entries: state.entries,
     dailyExercise : state.dailyExercise,
     dailyNutrition : state.dailyNutrition
   }
 }
-
-function getGradeIcon(grade){
-    switch(grade){
-      case 0: 
-          return(
-            <View style={[styles.gradeContainer]}>
-              <MaterialCommunityIcons
-                name='emoticon-sad-outline'
-                color='#4f83cc'
-                size={45}
-              />
-            </View>
-          )
-  
-      case 1:
-          return(
-                <View style={[styles.gradeContainer]}>
-                  <MaterialCommunityIcons
-                    name='emoticon-neutral-outline'
-                    color='#4f83cc'
-                    size={45}
-                  />
-                </View>
-              )
-      case 2:
-          return(
-            <View style={[styles.gradeContainer]}>
-              <MaterialCommunityIcons
-                name='emoticon-happy-outline'
-                color='#4f83cc' 
-                size={45}
-              />
-            </View>
-          )
-    }
-  }
 
   
 export default connect(mapStateToProps)(JournalEntry);
@@ -523,9 +468,6 @@ const styles = StyleSheet.create({
       row: {
         justifyContent: 'space-evenly',
         flexDirection: 'row',
-      },
-      gradeContainer: {
-        alignSelf : 'center'
       },
       basicText : {
         fontSize:18

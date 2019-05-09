@@ -22,7 +22,6 @@ class Tips extends React.Component {
         userLocation = "/SleepTips"
         console.log("going to " + userLocation)
         this.itemsRef = firebase.database().ref(userLocation).orderByChild('date');
-        console.log("journal state is " + this.state.journal)
 
     }
 
@@ -46,11 +45,6 @@ class Tips extends React.Component {
             releaseDate = new Date(keys[0])
             releaseDate = this.convertDateToUTC(releaseDate)
             currentDate = new Date()
-            
-            console.log("key 0 " + keys[0])
-            console.log("key 1 " + keys[1])
-            console.log("key 2 " + keys[2])
-            console.log("key 3 " + keys[3])
 
             if((releaseDate - currentDate) < 0)
             {
@@ -80,32 +74,11 @@ class Tips extends React.Component {
     convertDateToUTC = (date) => { 
       return new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds()); 
     }
-    completeNutrition = () => {
-        this.props.dispatch(CompleteDailyNutrition())
-        this.showDialog()
-    }
-
-    showDialog = () => {
-        this.setState({ dialogVisible: true });
-      };
-
-      handleCancel = () => {
-        this.setState({ dialogVisible: false });
-      };
 
     render(){
         return(
             <View style = {styles.centerText}>
                 <View style={{paddingTop:20}}></View>
-
-                <Dialog.Container visible={this.state.dialogVisible} useNativeDriver={true}>
-                    <Dialog.Title>Congrats Matt on completing your Nutrition</Dialog.Title>
-                    <Dialog.Description>
-                        We added this info to your next journal entry
-                    </Dialog.Description>
-                    <Dialog.Button label="Ok" onPress={this.handleCancel} />
-                </Dialog.Container>
-
             <View>
                 {this.state.tips !== null ? <NewsBoxList data={this.state.tips} navigation={this.props.navigation}/> : <ActivityIndicator style={{justifyContent: 'center', alignItems:'center'}} size="large" color="#000000" /> }
             </View>

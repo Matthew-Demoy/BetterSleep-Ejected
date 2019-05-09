@@ -2,13 +2,6 @@ import React from 'react'
 import {connect} from 'react-redux'
 import {Text, View, StyleSheet} from 'react-native'
 import * as firebase from 'firebase';
-
-//longest streak
-//current streak
-//days logged
-//exercises completed
-//days with good nutrition
-
 class StatBox extends React.Component{
     
     constructor(props){
@@ -21,9 +14,7 @@ class StatBox extends React.Component{
 
         var user = firebase.auth().currentUser
     
-        console.log("putting user info into db")
         userLocation = "users/" + user.uid + "/journals"
-        console.log("going to " + userLocation)
         this.itemsRef = firebase.database().ref(userLocation).orderByChild('date');
 
 
@@ -48,13 +39,10 @@ class StatBox extends React.Component{
               date: child.val().date,
               id: child.key
             });
-            console.log("snap " + child.val().didExercise,)
+
           });
         
           entries.sort(function(a,b){
-            console.log("sort")
-            console.log(b.date)
-            console.log(a.date)
             return new Date(b.date) - new Date(a.date) })
     
           this.setState({
@@ -66,14 +54,13 @@ class StatBox extends React.Component{
 
     componentDidUpdate(prevProps, prevState) {
         if (this.state.nextDay !== this.props.entries) {
-          console.log("updating calender state")
+
           this.setState({nextDay : this.props.entries})
         }
       }
 
     getExercisesCompleted = () => {
         result = Object.values(this.state.journal);
-        console.log("exr " + result)
         const sum = result.reduce((acc, currentvalue) => {
             if(currentvalue.didExercise === true)
             {
@@ -99,7 +86,6 @@ class StatBox extends React.Component{
     getCurrentStreak = () => {
         dates = []
         result = Object.values(this.state.journal);
-        console.log("streak " + result)
         result.forEach( function(entry) {
             if(entry.date !== undefined)
             {
@@ -108,7 +94,7 @@ class StatBox extends React.Component{
             
         });
         dateObs = []
-        console.log(dates)
+
         dates.forEach( function(date) {
             var mdy = date.split('-');
             dateObs.push(new Date(mdy[0], mdy[1]-1, mdy[2]))
@@ -122,19 +108,17 @@ class StatBox extends React.Component{
         
         for (i = 0; i < dateObs.length - 1; i++)
         {
-            console.log("calendar " + this.datediff(dateObs[i] , dateObs[i+1]))
 
             if(this.datediff(dateObs[i] , dateObs[i+1]) <= 1)
             {
                 streak = streak + 1
-                console.log("streak " + streak)
+
             }
             else
             {
                 if ( currentStreakFound == false)
                 {
                     currentStreakFound = true
-                    console.log("found " + this.datediff(today, dateObs[0]))
                     if(this.datediff(today, dateObs[0]) == 0 || (this.datediff(today,dateObs[0]) == 1))
                     {
                         currentStreak = streak
@@ -175,8 +159,7 @@ class StatBox extends React.Component{
         
         for (i = 0; i < dateObs.length - 1; i++)
         {
-            //console.log(this.datediff(dateObs[i] , dateObs[i+1]))
-            //console.log(streak)
+                    
             if(this.datediff(dateObs[i] , dateObs[i+1]) == 1)
             {
                 streak = streak + 1

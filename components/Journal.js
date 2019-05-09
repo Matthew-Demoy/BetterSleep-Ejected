@@ -1,13 +1,11 @@
 import React from 'react'
-import {View, Text, TouchableOpacity, StyleSheet, ActivityIndicator} from 'react-native'
+import {View, ActivityIndicator} from 'react-native'
 import {JournalBoxList} from './JournalBox'
-import {connect} from "react-redux";
 import PropTypes from 'prop-types';
 import * as firebase from 'firebase';
 
 //Journal screen displays the current journal entries and has a button to submit more entries.
 class Journal extends React.Component{
-
 
       constructor(props) {
         super(props);
@@ -15,12 +13,10 @@ class Journal extends React.Component{
           journal : null
         };
 
+        //get the user data from firebase
         var user = firebase.auth().currentUser
-        console.log("putting user info into db")
         userLocation = "users/" + user.uid + "/journals"
-        console.log("going to " + userLocation)
         this.itemsRef = firebase.database().ref(userLocation).orderByChild('date');
-        console.log("journal state is " + this.state.journal)
       }
 
       componentDidMount() {
@@ -40,6 +36,7 @@ class Journal extends React.Component{
         console.log("onboarding finish")
       };
 
+      //Firebase Listens for new items from the database to add to the journal state
       listenForItems(itemsRef) {
         itemsRef.on('value', (snap) => {
     
@@ -93,8 +90,8 @@ class Journal extends React.Component{
     render(){
         return(
             <View>
-                {/*We pass in an array of entry objects to a function called metric card.
-                    Metric card renders the entries one by one*/}
+                {/*We pass in an array of entry objects to a class named journalBoxList.
+                    journalBoxList the entries one by one*/}
                 {this.state.journal !== null ? <JournalBoxList data={this.state.journal} navigation={this.props.navigation}/> :  <ActivityIndicator style={{justifyContent: 'center', alignItems:'center'}} size="large" color="#000000" />}
             </View>
         )
@@ -112,30 +109,4 @@ Journal.propTypes = {
       })).isRequired
 }
 
-// mapStateToProps gets the current set of journal entries from the store and gives them to our Journal component
-function mapStateToProps (state) {
-  return {
-    entries: state.entries
-  }
-}
-
-const styles = StyleSheet.create({
-    ScreenTitle: {
-        color: 'white',
-        fontSize : 25,
-        
-    },
-    row: {
-        //flexDirection: 'row',
-        flex:2,
-        justifyContent: 'center',
-        alignItems: 'center',
-        
-      },
-    EntryButton: {
-        alignSelf:'flex-end',
-    }
-})
-
-// The connect function tells journal to recieve props from the store
-export default connect(mapStateToProps)(Journal)
+export default Journal
