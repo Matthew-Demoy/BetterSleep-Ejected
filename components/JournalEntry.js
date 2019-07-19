@@ -64,7 +64,7 @@ class JournalEntry extends React.Component{
       if(itemId !== undefined)
       {
         data = journals.find(obj => { return obj.id === itemId });
-        console.log("data " + Object.keys(data)[0]) 
+        console.log("data " + Object.keys(data)) 
         userLocation = "users/" + user.uid + "/journals/" + data.id
         this.sendItemsRef = firebase.database().ref(userLocation);
       }
@@ -80,7 +80,7 @@ class JournalEntry extends React.Component{
         itemId = -1
         const defaultExercise = this.props.dailyExercise
         const defaultNutrition = this.props.dailyNutrition
-        
+
           this.state = {
             text: "",
             height: 0,
@@ -91,14 +91,15 @@ class JournalEntry extends React.Component{
             isDateTimePickerVisible: false,
             itemId : newId,
             entries: null,
-            bedTime: new Date(),
-            wakeTime: new Date()
+            bedTime: "22:00",
+            wakeTime: "9:00"
           
         }
       }
       else
-      {
-
+      { 
+        console.log("bedTime in state " + data.bedTime)
+        console.log("wakeTime in state " + data.wakeTime)
         this.state = {
           text :  data.journal,
           height: 0,
@@ -152,6 +153,8 @@ class JournalEntry extends React.Component{
             didNutrition: child.val().didNutrition,
             grade: child.val().emotion,
             date: child.val().date,
+            wakeTime : child.val().wakeTime,
+            bedTime : child.val().bedTime,
             id: child.key,
           });
         });
@@ -250,8 +253,8 @@ class JournalEntry extends React.Component{
           emotion: this.state.grade,
           date: this.state.date,
           id : itemId,
-          bedTime: "[placeholder]",
-          wakeTime: "[placeholder]"
+          bedTime: this.state.bedTime,
+          wakeTime: this.state.wakeTime
         })
       }
       this.props.navigation.pop()

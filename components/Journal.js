@@ -53,13 +53,17 @@ class Journal extends React.Component{
           // get children as an array
           var entries = [];
           snap.forEach((child) => {
+            console.log("bedTime in db " + child.val().bedTime)
             entries.push({
               journal: child.val().text,
               didExercise: child.val().didExercise,
               didNutrition: child.val().didNutrition,
               grade: child.val().emotion,
               date: child.val().date,
-              id: child.key
+              id: child.key,
+              wakeTime : child.val().wakeTime,
+              bedTime : child.val().bedTime,
+              
             });
           });
         
@@ -72,30 +76,7 @@ class Journal extends React.Component{
     
         });
       }
-      
-
-      getJournals = () => {
-
-       let entries = []
-
-        ref.on("value" , snapshot => {
-          var entries = []
-            snapshot.forEach(function(child){
-                entries.push({
-                  journal: child.text,
-                  didExercise: child.exercise,
-                  didNutrition: child.val().nutrition,
-                  grade: child.val().emotion,
-                  date: child.val().date,
-                  id: child.val().date
-              });
-              return entries
-            });
-          })
-
-        //this.props.data[0].journal
-        return entries
-      }
+    
 
       createWeeklyNotifications(){
 
