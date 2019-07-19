@@ -1,8 +1,9 @@
 import React from 'react'
-import {View, ActivityIndicator} from 'react-native'
+import {View, ActivityIndicator, Platform} from 'react-native'
 import {JournalBoxList} from './JournalBox'
 import PropTypes from 'prop-types';
-import * as firebase from 'firebase';
+import * as firebaseSDK from 'firebase';
+import firebase from 'react-native-firebase';
 
 //Journal screen displays the current journal entries and has a button to submit more entries.
 class Journal extends React.Component{
@@ -10,17 +11,26 @@ class Journal extends React.Component{
       constructor(props) {
         super(props);
         this.state = {
-          journal : null
+          journal : null,
+          weeklyInfoNotifications: null,
+          weeklyTipsNotifications: null
         };
 
         //get the user data from firebase
-        var user = firebase.auth().currentUser
+        var user = firebaseSDK.auth().currentUser
         userLocation = "users/" + user.uid + "/journals"
-        this.itemsRef = firebase.database().ref(userLocation).orderByChild('date');
+        this.itemsRef = firebaseSDK.database().ref(userLocation).orderByChild('date');
+        this.tipsRef = firebaseSDK.database().ref("/SleepTips").orderByChild('date');
+        this.informationRef = firebaseSDK.database().ref("/SleepInformation").orderByChild('date');
       }
+
 
       componentDidMount() {
         this.listenForItems(this.itemsRef)
+        console.log("didmount listen for tips")
+        this.listenForTipsNotifications(this.tipsRef)
+        console.log("didmount listen for info")
+        this.listenForInfoNotifications(this.informationRef)
         this._onBoardComplete()
       
       }
@@ -86,6 +96,248 @@ class Journal extends React.Component{
         //this.props.data[0].journal
         return entries
       }
+
+      createWeeklyNotifications(){
+
+        firebase.notifications().removeAllDeliveredNotifications()
+        
+        const channel = new firebase.notifications.Android.Channel(
+          'dep_time_tracing',
+          'Time tracking',
+          firebase.notifications.Android.Importance.Max
+        ).setDescription('Hint users how much left time o drive to next dep');
+        firebase.notifications().android.createChannel(channel);
+    
+        this.state.weeklyTipsNotifications.forEach(function(notif) {
+         
+          if(Platform.OS == 'android')
+          {
+            const localNotification = new firebase.notifications.Notification({
+              sound: 'default',
+            // show_in_foreground: true,
+            // show_in_background: true,
+          })
+              .setNotificationId('hh2')
+              .setTitle('New Sleep Info')
+              .setBody(notif.FigurativeTitle)
+              .setData({
+                type: 'start',
+            })
+              .android.setChannelId('dep_time_tracing') // e.g. the id you chose above
+              .android.setSmallIcon('ic_launcher') // create this icon in Android Studio
+              .android.setPriority(firebase.notifications.Android.Priority.High);
+    
+                  // Schedule the notification for 5 seconds in the future
+          const date = new Date(notif.date);
+          date.setSeconds(date.getSeconds() + 5);
+          
+          firebase.notifications()
+            .scheduleNotification(localNotification, {
+                fireDate: date.getTime(),
+            })
+            .catch(err => console.error(err));
+          }
+          else{
+            const localNotification = new firebase.notifications.Notification({
+              sound: 'default',
+            // show_in_foreground: true,
+            // show_in_background: true,
+          })
+              .setNotificationId('hh2')
+              .setTitle('New Sleep Info')
+              .setBody(notif.LiteralTitle)
+              .setData({
+                type: 'start',
+            })
+              .android.setChannelId('dep_time_tracing') // e.g. the id you chose above
+              .android.setSmallIcon('ic_launcher') // create this icon in Android Studio
+              .android.setPriority(firebase.notifications.Android.Priority.High);
+    
+              const date = new Date(notif.date);
+    
+              date.setSeconds(date.getSeconds() + 5);
+              
+              firebase.notifications()
+                .scheduleNotification(localNotification, {
+                    fireDate: date.getTime(),
+                })
+                .catch(err => console.error(err));
+          }
+            
+        })  
+        
+      }
+
+      createweeklyInfoNotifications(){
+
+        const channel = new firebase.notifications.Android.Channel(
+          'dep_time_tracing',
+          'Time tracking',
+          firebase.notifications.Android.Importance.Max
+        ).setDescription('Hint users how much left time o drive to next dep');
+        firebase.notifications().android.createChannel(channel);
+
+        this.state.weeklyInfoNotifications.forEach(function(notif) {
+         
+          if(Platform.OS == 'android')
+          {
+            const localNotification = new firebase.notifications.Notification({
+              sound: 'default',
+            // show_in_foreground: true,
+            // show_in_background: true,
+          })
+              .setNotificationId('hh2')
+              .setTitle('New Sleep Info')
+              .setBody(notif.FigurativeTitle)
+              .setData({
+                type: 'start',
+                title: "Hello", 
+                body: "World!" 
+            })
+              .android.setChannelId('dep_time_tracing') // e.g. the id you chose above
+              .android.setSmallIcon('ic_launcher') // create this icon in Android Studio
+              .android.setPriority(firebase.notifications.Android.Priority.High);
+    
+                  // Schedule the notification for 5 seconds in the future
+          const date = new Date(notif.date);
+          console.log("notif date is " + notif.date)
+          date.setSeconds(date.getSeconds() + 5);
+          
+          firebase.notifications()
+            .scheduleNotification(localNotification, {
+                fireDate: date.getTime(),
+            })
+            .catch(err => console.error(err));
+          }
+          else{
+            const localNotification = new firebase.notifications.Notification({
+              sound: 'default',
+            // show_in_foreground: true,
+            // show_in_background: true,
+          })
+              .setNotificationId('hh2')
+              .setTitle('New Sleep Info')
+              .setBody(notif.LiteralTitle)
+              .setData({
+                type: 'start',
+                title: "Hello", 
+                body: "World!" 
+            })
+              .android.setChannelId('dep_time_tracing') // e.g. the id you chose above
+              .android.setSmallIcon('ic_launcher') // create this icon in Android Studio
+              .android.setPriority(firebase.notifications.Android.Priority.High);
+    
+              const date = new Date(notif.date);
+    
+              date.setSeconds(date.getSeconds() + 5);
+              
+              firebase.notifications()
+                .scheduleNotification(localNotification, {
+                    fireDate: date.getTime(),
+                })
+                .catch(err => console.error(err));
+          }
+            
+        })
+      }
+
+      convertDateToUTC = (date) => { 
+        return new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds()); 
+      }
+    
+      listenForInfoNotifications(notifRef) {
+        notifRef.on('value', (snap) => {
+          
+          // get children as an array
+          var entries = [];
+          var keys = [];
+          snap.forEach((child) => {
+            child.forEach((item) => {
+              var itemVal = item.val();
+              keys.push(itemVal)
+            })
+    
+            releaseDate = new Date(keys[0])
+            releaseDate = this.convertDateToUTC(releaseDate)
+            currentDate = new Date()
+    
+            if((releaseDate - currentDate) < 0)
+            {
+              entries.push({
+                date: keys[0],
+                FigurativeTitle: keys[2],
+                LiteralTitle: keys[3]
+              });
+            }
+            keys = []
+    
+          });
+    
+          entries.forEach((entry) => {
+            console.log(entry)
+          })
+          
+          this.setState({
+            weeklyInfoNotifications: entries
+          });
+          console.log("weekly notificaton" + this.state.weeklyInfoNotifications)
+          if(this.state.weeklyInfoNotifications != null)
+          {
+            
+            this.createweeklyInfoNotifications();
+          }
+
+        });
+    
+      }
+    
+      listenForTipsNotifications(notifRef) {
+        notifRef.on('value', (snap) => {
+    
+          // get children as an array
+          var entries = [];
+          var keys = [];
+          snap.forEach((child) => {
+            child.forEach((item) => {
+              var itemVal = item.val();
+              keys.push(itemVal)
+            })
+    
+            releaseDate = new Date(keys[0])
+            releaseDate = this.convertDateToUTC(releaseDate)
+            currentDate = new Date()
+    
+            if((releaseDate - currentDate) < 0)
+            {
+              console.log(keys[0])
+              entries.push({
+                date: keys[0],
+                FigurativeTitle: keys[2],
+                LiteralTitle: keys[3]
+              });
+            }
+            keys = []
+    
+          });
+    
+          entries.forEach((entry) => {
+            console.log(entry)
+          })
+          
+          this.setState({
+            weeklyTipsNotifications: entries
+          });
+          
+          if(this.state.weeklyTipsNotifications != null)
+          {
+            console.log("weekly notificaton")
+            this.createWeeklyNotifications();
+          }
+
+        });
+        
+
+      }
       
     render(){
         return(
@@ -96,17 +348,6 @@ class Journal extends React.Component{
             </View>
         )
     }
-}
-
-Journal.propTypes = {
-    entries: PropTypes.arrayOf(PropTypes.shape({
-        journal: PropTypes.string.isRequired,
-        didExercise: PropTypes.bool.isRequired,
-        didNutrition: PropTypes.bool.isRequired,
-        grade: PropTypes.number.isRequired,
-        date: PropTypes.string.isRequired,
-        id: PropTypes.number.isRequired
-      })).isRequired
 }
 
 export default Journal

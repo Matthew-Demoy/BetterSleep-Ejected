@@ -5,6 +5,9 @@ import DatePicker from 'react-native-datepicker'
 
 import PushNotification from 'react-native-push-notification';
 import PushNotificationIOS from 'PushNotificationIOS'
+import NotifService from './notifservice';
+import * as firebaseSDK from 'firebase';
+import firebase from 'react-native-firebase';
 
 export class Schedule extends React.Component{
     constructor(props){
@@ -13,11 +16,61 @@ export class Schedule extends React.Component{
             morningTime: null,
             eveningTime: null,
             isDateTimePickerVisible: false,
+            eveningFigurative: "Time to Snooze*Time to hit the sack! (remember to do your exercises and nutrition)",
+            eveningLiteral: "Evening Reminder*Time to go to bed! (remember to do your exercises and nutrition)",
+            morningFigurative: "Rise and Shine!*How was your Zzzz? (click to complete your daily metrics!)",
+            morningLiteral: "Morning Notification*How was your night? (click to complete your daily metrics!)",
         }
+
+        this.notif = new NotifService(this.onRegister.bind(this), this.onNotif.bind(this));
 
         this._getMorningTime();
         this._getEveningTime();
+
+        notifcationLocation = "notifications/" 
+        this.notifRef = firebaseSDK.database().ref(notifcationLocation);
     }
+
+    componentDidMount(){
+        this.listenForItems(this.notifRef);
+    }
+
+    listenForItems(notifRef) {
+        var notifications = [];
+
+        notifRef.on('value',(snap) => {
+            
+            var eveningFigurativeDB = snap.child("eveningFigurative");
+            var eveningLiteralDB = snap.child("eveningLiteral");
+            var morningFigurativeDB = snap.child("morningFigurative");
+            var morningLiteralDB = snap.child("morningLiteral");
+
+            console.log("eveningFigurative is " + eveningLiteralDB.toJSON());
+            this.setState(
+                {eveningFigurative : eveningFigurativeDB.toJSON(), 
+                eveningLiteral : eveningLiteralDB.toJSON(), 
+                morningFigurative : morningFigurativeDB.toJSON(), 
+                morningLiteral : morningLiteralDB.toJSON()})
+        });
+
+        
+    }
+
+    onRegister(token) {
+        Alert.alert("Registered !", JSON.stringify(token));
+        console.log(token);
+        this.setState({ registerToken: token.token, gcmRegistered: true });
+      }
+    
+      onNotif(notif) {
+        console.log(notif);
+        Alert.alert(notif.title, notif.message);
+      }
+    
+      handlePerm(perms) {
+        Alert.alert("Permissions", JSON.stringify(perms));
+      }
+
     _StoreMorningTime = async (value) => {
         console.log("morning store " + value)
         try {
@@ -55,7 +108,7 @@ export class Schedule extends React.Component{
         }
     }
 
-    changeMorningTime =  (time) => {
+    changeMorningTime = (time) => {
         if(time !== this.state.morningTime)
         {
             this.setState({morningTime: time})
@@ -64,6 +117,7 @@ export class Schedule extends React.Component{
             this.setMorningReminder(time)
 
         }
+        
     }
 
     changeEveningTime =  (time) => {
@@ -93,24 +147,24 @@ export class Schedule extends React.Component{
             newTime = new Date(newTime.getTime() + 60 * 60 * 24 * 1000);
             result = this.DateDiff(newTime, new Date())
         }
-        //calculate difference in milliseconds
+        //calculate difference in milliseconds   
 
-        console.log("notification will fire in " + result / 1000 / 24 + " minutes")
+        
         if( Platform.OS === 'android')
         {
-          PushNotification.localNotificationSchedule({
-            date: new Date(Date.now() + result),
-            id: '1',
-            message: "Morning Notification", // (required)
-          })
+            notificationParts = this.state.morningFigurative.split('*');
+            
+            this.notif.scheduleNotif(1, result, notificationParts[0], notificationParts[1]);
         }
         else
         {
+            console.log("morningLiteral notification is " + this.state.morningLiteral)
+            notificationParts = this.state.morningLiteral.split('*');
           PushNotificationIOS.scheduleLocalNotification({
             fireDate: new Date(Date.now() + result),
-            alertTitle: "do it",
-            alertBody: "Morning Notification",
-            //repeatInterval: "minute"
+            alertTitle: notificationParts[0],
+            alertBody: notificationParts[1],
+            repeatInterval: "minute",
             userInfo: { id: 1 }
           });
         }
@@ -135,36 +189,49 @@ export class Schedule extends React.Component{
         }
         //calculate difference in milliseconds
 
-        console.log("notification will fire in " + result / 1000 / 24 + " minutes")
+        console.log("notification will fire in " + result / 1000 / 60 + " minutes")
         if( Platform.OS === 'android')
         {
-          PushNotification.localNotificationSchedule({
-            date: new Date(Date.now() + result),
-            id: '2',
-            message: "Hello Youtube", // (required)
-          })
+            notificationParts = this.state.eveningFigurative.split('*');
+            this.notif.scheduleNotif(2, result, notificationParts[0],notificationParts[1]);
         }
         else
         {
+            notificationParts = this.state.eveningLiteral.split('*');
           PushNotificationIOS.scheduleLocalNotification({
             fireDate: new Date(Date.now() + result),
-            alertTitle: "do it",
-            alertBody: "Evening Notification",
-            //repeatInterval: "minute"
+            alertTitle: notificationParts[0],
+            alertBody: notificationParts[1],
+            repeatInterval: "minute",
             userInfo: { id: 2 }
           });
         }
     }   
 
 
+
     resetMorningNotifications = () => {
-        PushNotification.cancelLocalNotifications({id:'1'});
-        PushNotificationIOS.cancelLocalNotifications({id:1});
+        if( Platform.OS ==='android')
+        {
+            this.notif.cancelNotif(1);
+        }
+        else
+        {
+            PushNotificationIOS.cancelLocalNotifications({id:1});
+        }
+        
       }
 
     resetEveningNotifications = () => {
-        PushNotification.cancelLocalNotifications({id:'2'});
-        PushNotificationIOS.cancelLocalNotifications({id:2});
+        if( Platform.OS ==='android')
+        {
+            this.notif.cancelNotif(2);
+        }
+        else
+        {
+            PushNotificationIOS.cancelLocalNotifications({id:2});
+        }
+        
       }
 
     DateDiff = (date1, date2) => {
@@ -207,7 +274,7 @@ export class Schedule extends React.Component{
                 />
             </View>
         )
-    }
+    } 
     
 }
 

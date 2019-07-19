@@ -15,7 +15,8 @@
 #import "RNFirebaseMessaging.h"
 #import <React/RCTPushNotificationManager.h>
 #import <UserNotifications/UserNotifications.h>
-#import "RNSplashScreen.h" 
+#import "RNSplashScreen.h"
+#import "RNFirebaseNotifications.h"
 
 @implementation AppDelegate
 

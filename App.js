@@ -5,13 +5,14 @@ import currentEntries from './reducers/Journal'
 import JournalNav from './containers/JournalNav'
 import * as firebaseSDK from 'firebase';
 import firebase from 'react-native-firebase';
-import { Image, AsyncStorage, DeviceEventEmitter } from 'react-native';
+import { Image, AsyncStorage, DeviceEventEmitter,Platform } from 'react-native';
 import PushNotification from 'react-native-push-notification';
 import PushNotificationAndroid from 'react-native-push-notification';
 import PushNotificationIOS from 'PushNotificationIOS'
 import Onboarding from 'react-native-onboarding-swiper';
 import RootNavigation from './navigation/RootNavigation';
 import ApiKeys from './constants/ApiKeys.js';
+
 state = {
 
     dailyExercise: false,
@@ -38,15 +39,18 @@ export default class App extends Component {
       isAuthenticated: false,
       // firstTime detects if a user should go through userO nboarding 
       firstTime: null,
-      inputSleep: false
+      inputSleep: false,
     };
     
     // Initialize firebase...
     if (!firebaseSDK.apps.length) { firebaseSDK.initializeApp(ApiKeys.FirebaseConfig); }
     firebaseSDK.auth().onAuthStateChanged(this.onAuthStateChanged);
-
     this._retrieveFirstTime()
+    
+
   }
+
+  
 
   onAuthStateChanged = (user) => {
     this.setState({isAuthenticationReady: true});
@@ -54,14 +58,17 @@ export default class App extends Component {
 
   }
 
-  async componentDidMount() {
-    
+
+ componentDidMount() {
     this.checkPermission();
     this.createNotificationListeners();
+
   }
+
 
   componentWillMount(){
     //This function should detect when a user clicks on a daily notification and open a window
+    /*
     (function() {
       // Register all the valid actions for notifications here and add the action handler for each action
       PushNotificationAndroid.registerNotificationActions(['Accept','Reject']);
@@ -77,7 +84,9 @@ export default class App extends Component {
         }
       });
     })();
+      */
   }
+
 
 
   componentWillUnmount() {
@@ -136,13 +145,9 @@ export default class App extends Component {
       console.log('onNotification:');
       
        //this.showAlert(title, body);
-       alert('message');
+       //alert('message');
     });
   
-    const channel = new firebase.notifications.Android.Channel('fcm_default_channel', 'Demo app name', firebase.notifications.Android.Importance.High)
-    .setDescription('Demo app description')
-    .setSound('sampleaudio.mp3');
-    firebase.notifications().android.createChannel(channel);
 
      /*
     * If your app is in background, you can listen for when a notification is clicked / tapped / opened as follows:
@@ -159,7 +164,7 @@ export default class App extends Component {
     if (notificationOpen) {
       const { title, body } = notificationOpen.notification;
       console.log('getInitialNotification:');
-      this.showAlert(title, body);
+      //this.showAlert(title, body);
     }
     /*
     * Triggered for data only payload in foreground
@@ -194,6 +199,7 @@ export default class App extends Component {
         console.log('permission rejected');
       }
     }
+
 
   render() {
 
