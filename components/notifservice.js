@@ -1,4 +1,6 @@
 import PushNotification from 'react-native-push-notification';
+import { withNavigation } from 'react-navigation';
+
 export default class NotifService {
 
   constructor(onRegister, onNotification) {
@@ -13,7 +15,7 @@ export default class NotifService {
       onRegister: onRegister, //this._onRegister.bind(this),
 
       // (required) Called when a remote or local notification is opened or received
-      onNotification: onNotification, //this._onNotification,
+      onNotification: onNotification,
 
       // ANDROID ONLY: GCM Sender ID (optional - not required for local notifications, but is need to receive remote push notifications)
       senderID: gcm,
@@ -99,7 +101,7 @@ export default class NotifService {
       /* iOS and Android properties */
       title: title, // (optional)
       message: message, // (required)
-      repeatType: 'minute',
+      repeatType: 'day',
       playSound: true, // (optional) default: true
       soundName: 'default', // (optional) Sound to play when the notification is shown. Value of 'default' plays the default sound. It can be set to a custom sound such as 'android.resource://com.xyz/raw/my_sound'. It will look for the 'my_sound' audio file in 'res/raw' directory and play it. default: 'default' (default sound is played)
     });

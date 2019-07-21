@@ -12,6 +12,7 @@ import PushNotificationIOS from 'PushNotificationIOS'
 import Onboarding from 'react-native-onboarding-swiper';
 import RootNavigation from './navigation/RootNavigation';
 import ApiKeys from './constants/ApiKeys.js';
+import NavigationService from './components/NavigationServices'
 
 state = {
 
@@ -60,9 +61,8 @@ export default class App extends Component {
 
 
  componentDidMount() {
+    //this.createNotificationListeners();
     this.checkPermission();
-    this.createNotificationListeners();
-
   }
 
 
@@ -143,7 +143,7 @@ export default class App extends Component {
     this.notificationListener = firebase.notifications().onNotification((notification) => {
       const { title, body } = notification;
       console.log('onNotification:');
-      
+      this.props.navigation.navigate('Entry');
        //this.showAlert(title, body);
        //alert('message');
     });
@@ -164,6 +164,7 @@ export default class App extends Component {
     if (notificationOpen) {
       const { title, body } = notificationOpen.notification;
       console.log('getInitialNotification:');
+      NavigationService.navigate("Entry");
       //this.showAlert(title, body);
     }
     /*
@@ -199,7 +200,6 @@ export default class App extends Component {
         console.log('permission rejected');
       }
     }
-
 
   render() {
 
@@ -260,4 +260,12 @@ export default class App extends Component {
       PushNotificationIOS.cancelLocalNotifications();
     }
 }
+
+export function onNotif(notif) {
+  console.log(notif);
+  /*
+  this.props.navigation.navigate('Journal');
+  this.props.navigation.navigate('Entry');
+  */
+} 
 

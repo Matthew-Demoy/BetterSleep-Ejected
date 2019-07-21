@@ -1,5 +1,5 @@
 import React from "react"
-import {Text, View, StyleSheet, AsyncStorage, Platform} from "react-native"
+import {Text, View, StyleSheet, AsyncStorage, Platform, Alert} from "react-native"
 import DateTimePicker from "react-native-modal-datetime-picker";
 import DatePicker from 'react-native-datepicker'
 
@@ -8,6 +8,8 @@ import PushNotificationIOS from 'PushNotificationIOS'
 import NotifService from './notifservice';
 import * as firebaseSDK from 'firebase';
 import firebase from 'react-native-firebase';
+
+import {onNotif} from '../App'
 
 export class Schedule extends React.Component{
     constructor(props){
@@ -22,7 +24,7 @@ export class Schedule extends React.Component{
             morningLiteral: "Morning Notification*How was your night? (click to complete your daily metrics!)",
         }
 
-        this.notif = new NotifService(this.onRegister.bind(this), this.onNotif.bind(this));
+        this.notif = new NotifService(this.onRegister.bind(this), onNotif.bind(this));
 
         this._getMorningTime();
         this._getEveningTime();
@@ -62,10 +64,7 @@ export class Schedule extends React.Component{
         this.setState({ registerToken: token.token, gcmRegistered: true });
       }
     
-      onNotif(notif) {
-        console.log(notif);
-        Alert.alert(notif.title, notif.message);
-      }
+      
     
       handlePerm(perms) {
         Alert.alert("Permissions", JSON.stringify(perms));
@@ -207,8 +206,6 @@ export class Schedule extends React.Component{
           });
         }
     }   
-
-
 
     resetMorningNotifications = () => {
         if( Platform.OS ==='android')

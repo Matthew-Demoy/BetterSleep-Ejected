@@ -52,7 +52,8 @@ class Profile extends React.Component{
                 <StatBox/>
                 <View style={{paddingTop:10}} />
 
-                <Schedule/>
+                <Schedule navigation={this.props.navigation}/>
+
                 <TouchableOpacity style={{borderWidth:1, paddingVertical:15}} onPress={this.onSettingsPress}>
                     <Text style={{alignSelf:'center', fontSize:20}}>Settings</Text>
                 </TouchableOpacity>
