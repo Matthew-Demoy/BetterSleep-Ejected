@@ -10,6 +10,11 @@ const currentEntries = (state = [], action) => {
           return Object.assign({}, state, {
             dailyNutrition: true
         })
+        case "ENTER_BED_TIME":
+          console.log("activity - enter Bed Time")
+          return Object.assign({}, state, {
+            bedTime: action.bedTime
+        })
       default:
       console.log("entry - no action")
         return state

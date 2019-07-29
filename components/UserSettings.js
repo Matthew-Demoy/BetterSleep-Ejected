@@ -101,13 +101,13 @@ export default class UserSettings extends React.Component {
                 </View>
             </TouchableOpacity>
 
-            <Dialog.Container visible={this.state.dialogVisible} useNativeDriver={true}>
+            <Dialog.Container visible={this.state.dialogVisible}>
                 <Dialog.Title>Change Name</Dialog.Title>
                 <Dialog.Description>
                     Do you want to change your profile name?
                 </Dialog.Description>
                 <Dialog.Input 
-                    onChangeText={(text) => this.setState({nameInput:text})} value={this.state.nameInput}
+                    onChangeText={(text) => this.setState({nameInput:text})} value={this.state.nameInput} placeholder={"Enter Name"} style={{borderWidth:1}}
                 />
                 <Dialog.Button label="Cancel" onPress={this.handleCancel} />
                 <Dialog.Button label="Change" onPress={this.handleChange} />
@@ -228,6 +228,7 @@ export default class UserSettings extends React.Component {
             </View>
 
             <Button title="Submit Settings" onPress={this.onSettingsChange} />
+            <View style={{paddingTop:10}} />
             <Button title="Cancel Changes" onPress={this.onBackToProfilePress} />
             <Text style={{alignSelf:"center"}}>For customer support email umlproject48@gmail.com</Text>
         </View>

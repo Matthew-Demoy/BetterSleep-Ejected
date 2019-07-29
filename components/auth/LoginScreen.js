@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { StyleSheet, View, Text, TextInput, Button, Alert, Image } from 'react-native';
+import { StyleSheet, View, Text, TextInput, Button, Alert, Image, Platform, KeyboardAvoidingView } from 'react-native';
 import { NavigationActions, StackActions} from 'react-navigation';
 import * as firebase from 'firebase';
 import SplashScreen from 'react-native-splash-screen'
@@ -44,7 +44,7 @@ export default class LoginScreen extends React.Component {
 
     render() {
         return (
-            <View>
+            <KeyboardAvoidingView behavior="position">
                 <Image 
                     style={{width: 200, height: 200, alignSelf:'center'}}
                     source={require('../../assets/Icon/images/LoginIcon.png')}
@@ -76,16 +76,27 @@ export default class LoginScreen extends React.Component {
                         autoCapitalize="none"
                         autoCorrect={false}
                     />
-
-                    <Button title="Login" onPress={this.onLoginPress} />
-                    <Button title="Create account..." onPress={this.onCreateAccountPress} />
-                    <Button title="Forgot Password..." onPress={this.onForgotPasswordPress} />
+                    <View style={{paddingTop:10}} />
+                    <Button style={styles.button} title="Login" onPress={this.onLoginPress} />
+                    <View style={{paddingTop:10}} />
+                    <Button style={styles.button} title="Create account..." onPress={this.onCreateAccountPress} />
+                    <View style={{paddingTop:10}} />
+                    <Button style={styles.button} title="Forgot Password..." onPress={this.onForgotPasswordPress} />
                 </View>
-            </View>
+            </KeyboardAvoidingView>
         );
     }
 }
 
 const styles = StyleSheet.create({
-
+    button: Platform.select({
+        ios: {},
+        android: {
+          elevation: 4,
+          // Material design blue from https://material.google.com/style/color.html#color-color-palette
+          backgroundColor: '#2196F3',
+          borderRadius: 2,
+          margin: 1
+        },
+      }),
 });

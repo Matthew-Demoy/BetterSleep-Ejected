@@ -36,3 +36,11 @@ export function DeleteEntry(itemId) {
         }
     }
 }
+
+export function EnterBedTime(bedTime) {
+    console.log(bedTime)
+    return{
+        type: "ENTER_BED_TIME",
+        bedTime : bedTime
+    }
+}

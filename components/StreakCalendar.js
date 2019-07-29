@@ -96,6 +96,13 @@ class StreakCalendar extends React.Component{
            markedDates= {markedDates}
           // Date marking style [simple/period/multi-dot/custom]. Default = 'simple'
           markingType={'period'}
+          style={{
+            borderWidth: 1,
+            borderColor: 'gray',
+            height: 350,
+            marginHorizontal: 5,
+            borderRadius:10,
+          }}
         />
         )
     }

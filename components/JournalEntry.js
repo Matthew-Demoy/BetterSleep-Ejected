@@ -43,7 +43,21 @@ class JournalEntry extends React.Component{
   componentDidMount() {
     this.props.navigation.setParams({ options: this.options.bind(this.state.itemId) });
     this.listenForItems(this.getItemsRef)
+    this.getBedTime;
   }
+
+  getBedTime = async () => {
+    try {
+      const value = await AsyncStorage.getItem('BEDTIME');
+      if (value !== null) {
+        this.setState({bedTime : value})
+        console.log("async getBedTime " + value);
+      }
+    } catch (error) {
+      console.log("async " + error)
+      // Error retrieving data
+    }
+  };
 
 
     // Each Journal Entry is composed of 4 Parts(text,grade,didNutrition,didExercise) 
@@ -91,7 +105,7 @@ class JournalEntry extends React.Component{
             isDateTimePickerVisible: false,
             itemId : newId,
             entries: null,
-            bedTime: "22:00",
+            bedTime: this.props.bedTime,
             wakeTime: "9:00"
           
         }
@@ -412,7 +426,7 @@ class JournalEntry extends React.Component{
                         style={{width: 200}}
                         date={this.state.wakeTime}
                         mode="time"
-                        format="HH:mm"
+                        format="h:mm A"
                         confirmBtnText="Confirm"
                         cancelBtnText="Cancel"
                         minuteInterval={10}
@@ -424,7 +438,7 @@ class JournalEntry extends React.Component{
                         style={{width: 200}}
                         date={this.state.bedTime}
                         mode="time"
-                        format="HH:mm"
+                        format="h:mm A"
                         confirmBtnText="Confirm"
                         cancelBtnText="Cancel"
                         minuteInterval={10}
@@ -450,7 +464,8 @@ function mapStateToProps (state) {
   console.log(state.dailyExercise)
   return {
     dailyExercise : state.dailyExercise,
-    dailyNutrition : state.dailyNutrition
+    dailyNutrition : state.dailyNutrition,
+    bedTime: state.bedTime
   }
 }
 

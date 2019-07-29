@@ -1,10 +1,13 @@
 import React from 'react'
-import {View, ActivityIndicator, Platform} from 'react-native'
+import {View, ActivityIndicator, Platform, PushNotificationIOS} from 'react-native'
 import {JournalBoxList} from './JournalBox'
 import PropTypes from 'prop-types';
 import * as firebaseSDK from 'firebase';
 import firebase from 'react-native-firebase';
-import PushNotificationIOS from 'PushNotificationIOS'
+import BedTimeModal from './BedTimeModal'
+import NotifService from './notifservice';
+import PushNotification from 'react-native-push-notification';
+import { objectExpression } from '@babel/types';
 
 //Journal screen displays the current journal entries and has a button to submit more entries.
 class Journal extends React.Component{
@@ -14,7 +17,8 @@ class Journal extends React.Component{
         this.state = {
           journal : null,
           weeklyInfoNotifications: null,
-          weeklyTipsNotifications: null
+          weeklyTipsNotifications: null,
+          openModal: false
         };
 
         //get the user data from firebase
@@ -23,13 +27,79 @@ class Journal extends React.Component{
         this.itemsRef = firebaseSDK.database().ref(userLocation).orderByChild('date');
         this.tipsRef = firebaseSDK.database().ref("/SleepTips").orderByChild('date');
         this.informationRef = firebaseSDK.database().ref("/SleepInformation").orderByChild('date');
-      }
+
+        this.notif = new NotifService(this.onRegister.bind(this), this.onNotif.bind(this));
       
+      }
+
+      onRegister(token) {
+        Alert.alert("Registered !", JSON.stringify(token));
+        console.log(token);
+        this.setState({ registerToken: token.token, gcmRegistered: true });
+      }
+    
+      onNotif(notif) {
+        console.log(notif);
+        if(typeof notif !== 'undefined')
+        {
+          if(notif.id === '1')
+          {
+            //day
+            this.props.navigation.navigate('Entry');
+            
+          }
+          else
+          {
+            //evening
+            console.log("set openModal to true")
+            this.setState({openModal:true});
+          }
+        }
+      }
 
 
       componentDidMount() {
-        this.createNotificationListeners();
-        PushNotificationIOS.addEventListener('localNotification', () => {this.props.navigation.navigate('Entry');});
+
+        if(Platform.OS == 'ios')
+        {
+          this.createNotificationListeners();
+          PushNotificationIOS.addEventListener('localNotification', function (){
+            console.log('found ios notif')
+            this.props.navigate('entry')
+          });
+
+          PushNotificationIOS.addEventListener('notification', function (){
+            console.log('found ios notif')
+            this.props.navigate('entry')
+          });
+
+          function appOpenedByNotificationTap(notification) {
+            // This is your handler. The tapped notification gets passed in here.
+            // Do whatever you like with it.
+            console.log(notification);
+          }
+          
+          PushNotificationIOS.getInitialNotification().then(function (notification) {
+            if (notification != null) {
+              appOpenedByNotificationTap(notification);
+              console.log("cache hit");
+            }
+          });
+          
+        /*
+          res = PushNotificationIOS.getInitialNotification()
+          console.log("ios notification " + res)
+          if(res !== null)
+          {
+            console.log("ios notification! " + res)
+            this.props.navigation.navigate('Entry');
+            PushNotificationIOS.requestPermissions();
+          }
+        */
+        }
+        else{
+          this.onNotif();
+        }
         this.listenForItems(this.itemsRef)
         console.log("didmount listen for tips")
         this.listenForTipsNotifications(this.tipsRef)
@@ -43,11 +113,17 @@ class Journal extends React.Component{
         * Triggered when a particular notification has been received in foreground
         * */
         this.notificationListener = firebase.notifications().onNotification((notification) => {
-          const { title, body } = notification;
-          console.log('onNotification:');
-          this.props.navigation.navigate('Entry');
-           //this.showAlert(title, body);
-           //alert('message');
+          const id = notificationOpen.notification.data.id;
+
+          //this.showAlert(title, boxdy);
+          if(id === 1)
+          {
+            this.props.navigation.navigate('Entry');
+          }
+          else{
+            this.setState({openModal:true});
+          }
+          
         });
       
     
@@ -55,8 +131,16 @@ class Journal extends React.Component{
         * If your app is in background, you can listen for when a notification is clicked / tapped / opened as follows:
         * */
         this.notificationOpenedListener = firebase.notifications().onNotificationOpened((notificationOpen) => {
-          const { title, body } = notificationOpen.notification;
-          //this.showAlert(title, body);
+          const id = notificationOpen.notification.data.id;
+
+          //this.showAlert(title, boxdy);
+          if(id === 1)
+          {
+            this.props.navigation.navigate('Entry');
+          }
+          else{
+            this.setState({openModal:true});
+          }
         });
     
         /*
@@ -64,9 +148,9 @@ class Journal extends React.Component{
         * */
         const notificationOpen = await firebase.notifications().getInitialNotification();
         if (notificationOpen) {
-          const { title, body } = notificationOpen.notification;
-          console.log('getInitialNotification:');
-          NavigationService.navigate("Entry");
+          const id = notificationOpen.notification.data.id;
+          console.log('getInitialNotification: ' + Object.keys(notificationOpen.notification.data));
+          this.props.navigation.navigate('Entry');
           //this.showAlert(title, body);
         }
         /*
@@ -362,6 +446,10 @@ class Journal extends React.Component{
         
 
       }
+
+    toggleBedTimeModal(){
+      this.setState({openModal : false});
+    }
       
     render(){
         return(
@@ -369,6 +457,7 @@ class Journal extends React.Component{
                 {/*We pass in an array of entry objects to a class named journalBoxList.
                     journalBoxList the entries one by one*/}
                 {this.state.journal !== null ? <JournalBoxList data={this.state.journal} navigation={this.props.navigation}/> :  <ActivityIndicator style={{justifyContent: 'center', alignItems:'center'}} size="large" color="#000000" />}
+                <BedTimeModal open={this.state.openModal} hideModal={this.toggleBedTimeModal}/>
             </View>
         )
     }

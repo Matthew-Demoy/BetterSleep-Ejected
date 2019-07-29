@@ -17,7 +17,8 @@ import NavigationService from './components/NavigationServices'
 state = {
 
     dailyExercise: false,
-    dailyNutrition: false
+    dailyNutrition: false,
+    bedTime: "22:00"
 }
 
 
@@ -63,17 +64,18 @@ export default class App extends Component {
  componentDidMount() {
     //this.createNotificationListeners();
     this.checkPermission();
+    
   }
 
 
   componentWillMount(){
     //This function should detect when a user clicks on a daily notification and open a window
-    /*
+    
     (function() {
       // Register all the valid actions for notifications here and add the action handler for each action
-      PushNotificationAndroid.registerNotificationActions(['Accept','Reject']);
+      PushNotificationAndroid.registerNotificationActions([]);
       DeviceEventEmitter.addListener('notificationActionReceived', function(action){
-        console.log ('Notification action received: ' + action);
+        console.log ('Notification action received: ');
         const info = JSON.parse(action.dataJSON);
         console.log("info action is " + info.action)
         if (info.action == 'Accept') {
@@ -84,7 +86,7 @@ export default class App extends Component {
         }
       });
     })();
-      */
+      
   }
 
 
@@ -261,11 +263,5 @@ export default class App extends Component {
     }
 }
 
-export function onNotif(notif) {
-  console.log(notif);
-  /*
-  this.props.navigation.navigate('Journal');
-  this.props.navigation.navigate('Entry');
-  */
-} 
+
 

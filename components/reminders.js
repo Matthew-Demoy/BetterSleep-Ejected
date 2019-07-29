@@ -1,15 +1,12 @@
 import React from "react"
-import {Text, View, StyleSheet, AsyncStorage, Platform, Alert} from "react-native"
+import {Text, View, StyleSheet, AsyncStorage, Platform, Alert, PushNotificationIOS} from "react-native"
 import DateTimePicker from "react-native-modal-datetime-picker";
 import DatePicker from 'react-native-datepicker'
 
 import PushNotification from 'react-native-push-notification';
-import PushNotificationIOS from 'PushNotificationIOS'
 import NotifService from './notifservice';
 import * as firebaseSDK from 'firebase';
 import firebase from 'react-native-firebase';
-
-import {onNotif} from '../App'
 
 export class Schedule extends React.Component{
     constructor(props){
@@ -23,15 +20,24 @@ export class Schedule extends React.Component{
             morningFigurative: "Rise and Shine!*How was your Zzzz? (click to complete your daily metrics!)",
             morningLiteral: "Morning Notification*How was your night? (click to complete your daily metrics!)",
         }
-
-        this.notif = new NotifService(this.onRegister.bind(this), onNotif.bind(this));
-
         this._getMorningTime();
         this._getEveningTime();
 
         notifcationLocation = "notifications/" 
         this.notifRef = firebaseSDK.database().ref(notifcationLocation);
+        this.notif = new NotifService();
     }
+
+    onRegister(token) {
+        Alert.alert("Registered !", JSON.stringify(token));
+        console.log(token);
+        this.setState({ registerToken: token.token, gcmRegistered: true });
+      }
+    
+      onNotif(notif) {
+        console.log(notif);
+        Alert.alert(notif.title, notif.message);
+      }
 
     componentDidMount(){
         this.listenForItems(this.notifRef);
@@ -152,7 +158,7 @@ export class Schedule extends React.Component{
         if( Platform.OS === 'android')
         {
             notificationParts = this.state.morningFigurative.split('*');
-            
+            console.log("making android morning notif " + result)
             this.notif.scheduleNotif(1, result, notificationParts[0], notificationParts[1]);
         }
         else
@@ -197,10 +203,12 @@ export class Schedule extends React.Component{
         else
         {
             notificationParts = this.state.eveningLiteral.split('*');
+            
           PushNotificationIOS.scheduleLocalNotification({
-            fireDate: new Date(Date.now() + result),
+            fireDate: new Date(Date.now() + 30),
             alertTitle: notificationParts[0],
             alertBody: notificationParts[1],
+            alertAction: 'view',
             repeatInterval: "minute",
             userInfo: { id: 2 }
           });
@@ -246,28 +254,29 @@ export class Schedule extends React.Component{
     render(){
         return(
             <View styles={styles.row}>
-                <Text>Morning Reminder</Text>
-                <DatePicker
-                    style={{width: 200}}
-                    date={this.state.morningTime}
-                    mode="time"
-                    format="HH:mm"
-                    confirmBtnText="Confirm"
-                    cancelBtnText="Cancel"
-                    minuteInterval={10}
-                    onDateChange={this.changeMorningTime}
-                />
 
-                <Text>Evening Reminder</Text>
+                <Text>Night check in Reminder</Text>
                 <DatePicker
                     style={{width: 200}}
                     date={this.state.eveningTime}
                     mode="time"
-                    format="HH:mm"
+                    format="h:mm A"
                     confirmBtnText="Confirm"
                     cancelBtnText="Cancel"
-                    minuteInterval={10}
+                    minuteInterval={1}
                     onDateChange={this.changeEveningTime}
+                />
+
+                <Text>Morning Journal Reminder</Text>
+                <DatePicker
+                    style={{width: 200}}
+                    date={this.state.morningTime}
+                    mode="time"
+                    format="h:mm A"
+                    confirmBtnText="Confirm"
+                    cancelBtnText="Cancel"
+                    minuteInterval={1}
+                    onDateChange={this.changeMorningTime}
                 />
             </View>
         )
