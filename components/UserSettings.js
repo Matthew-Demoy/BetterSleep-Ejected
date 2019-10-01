@@ -81,7 +81,7 @@ export default class UserSettings extends React.Component {
             name: this.state.name
 
         })
-
+        
         this.props.navigation.pop()
         this.props.navigation.navigate('Profile')
     }
