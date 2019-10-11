@@ -5,7 +5,7 @@ import { FontAwesome,
   MaterialCommunityIcons 
   } from 'react-native-vector-icons'
   import PropTypes from 'prop-types';
-  import {getGradeIcon} from './util'
+
 
 class NewsBox extends React.PureComponent {
   _onPress = () => {
@@ -24,10 +24,10 @@ class NewsBox extends React.PureComponent {
     }
     return (
       <View style={styles.outerBox}>
-        <TouchableOpacity style={styles.roundBox} onPress={this._onPress}>
-          <View style={{ borderColor: 'white'}}>
-            <View style={[styles.row, {marginTop:12}]}>
-                <Text style={{fontSize:30}}>{title}</Text>
+        <TouchableOpacity onPress={this._onPress}>
+          <View style={{ borderColor: 'white', marginBottom: 10}}>
+            <View style={[styles.row, {marginVertical:12}]}>
+                <Text style={{fontSize:30, width: "100%", fontWeight: '600'}}>{title}</Text>
               </View>
               <Text style={styles.journalText}>{this.props.Description}</Text>
             </View>
@@ -104,38 +104,20 @@ NewsBoxList.propTypes = {
 
 
 const styles = StyleSheet.create({
-  container: {
-    marginTop: 12,
-    marginLeft:12,
-    marginRight:12,
-    
-  },
-      gradeContainer: {
-        alignSelf : 'center'
-      },
-  roundBox: {
-    paddingBottom: 10,
-    borderBottomWidth: 5,
-    borderColor: 'grey'
-  },
   outerBox:{
-    
+    width: "97%",
+    alignSelf: 'center',
+    borderColor: "lightgray",
+    borderBottomWidth: 1,
+    paddingBottom: 5
   },
   row: {
-    flexDirection: 'row',
-    flex: 1,
     alignItems: 'center',
     justifyContent: 'center', 
-  },
-  iconContainer: {
-    flexDirection: 'row',
-    marginLeft: 'auto',
-    alignItems: 'flex-end'
+    marginBottom: 10
   },
   journalText : {
     fontSize: 18,
-    marginLeft:5, 
-    marginRight:5
   }
 })
 

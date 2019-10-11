@@ -195,21 +195,71 @@ class StatBox extends React.Component{
        
         return(
           <View>
-              <Text style={styles.generic}>Days Logged: {this.state.journal.length}</Text>
-              <Text style={styles.generic}>Exercises completed: {this.getExercisesCompleted()} </Text>
-              <Text style={styles.generic}>Nutrition Logged: {this.getNutritionCompleted()}</Text>
-              <Text style={styles.generic}>Current Streak: {this.getCurrentStreak()}</Text>
-              <Text style={styles.generic}>Longest Streak: {this.getLongestStreak()}</Text>
-              
+              <View style={styles.container}>
+                <Text style={styles.desc}>Days Logged: </Text>
+                <View style={styles.rightContainer}>
+                    <Text style={styles.stat}> {this.state.journal.length}</Text>
+                </View>
+                
+              </View>
+              <View style={styles.container}>
+                <Text style={styles.desc}>Exercises completed: </Text>
+                <View style={styles.rightContainer}>
+                    <Text style={styles.stat}>{this.getExercisesCompleted()}</Text>
+                </View>
+                
+              </View>
+              <View style={styles.container}>
+                 <Text style={styles.desc}>Nutrition Logged: </Text>
+                 <View style={styles.rightContainer}>
+                    <Text style={styles.stat}> {this.getNutritionCompleted()} </Text>
+                 </View>
+                 
+              </View>
+              <View style={styles.container}>
+                <Text style={styles.desc}>Current Streak: </Text>
+                <View style={styles.rightContainer}>
+                    <Text style={styles.stat}>{this.getCurrentStreak()}</Text>
+                </View>
+        
+              </View>
+              <View style={styles.container}>
+                <Text style={styles.desc}>Longest Streak: </Text>
+                <View style={styles.rightContainer}>
+                    <Text style={styles.stat}>{this.getLongestStreak()}</Text>
+                </View>
+              </View>
           </View>
         )
     }
 }
 
 const styles = StyleSheet.create({
-    generic : {
-        fontSize: 18
+    desc : {
+        fontSize: 22,
+        color: "gray"
     },
+    container : {
+        flexDirection: "row",
+        justifyContent:"space-between",
+        alignItems: "center",
+        borderRadius: 10,
+        paddingLeft:10,
+        borderWidth: .5,
+        marginVertical: 5,
+        marginHorizontal: 5,
+        overflow: "hidden",
+        borderColor: "lightgray"
+    },
+    stat: {
+        fontSize: 26,
+        color: "white",
+    },
+    rightContainer: {
+        backgroundColor: '#27A8E6',
+        width: 50,
+        alignItems: "center",
+    }
 })
 
 function mapStateToProps (state) {

@@ -57,7 +57,9 @@ class CleanDate extends React.PureComponent {
 
 const styles = StyleSheet.create({
     date: {
-        fontSize: 22
+        marginTop:0,
+        fontSize: 24,
+        color: "#AEAEAE"
     }
 })
 

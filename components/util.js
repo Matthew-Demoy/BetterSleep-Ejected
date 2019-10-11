@@ -21,7 +21,7 @@ export function guidGenerator() {
     return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4());
 }
 
-export function getGradeIcon(grade){
+export function getGradeIcon(grade, size){
     switch(grade){
       case 0: 
           return(
@@ -29,7 +29,7 @@ export function getGradeIcon(grade){
               <MaterialCommunityIcons
                 name='emoticon-sad-outline'
                 color='#4f83cc'
-                size={45}
+                size={size}
               />
             </View>
           )
@@ -40,7 +40,7 @@ export function getGradeIcon(grade){
                   <MaterialCommunityIcons
                     name='emoticon-neutral-outline'
                     color='#4f83cc'
-                    size={45}
+                    size={size}
                   />
                 </View>
               )
@@ -50,7 +50,7 @@ export function getGradeIcon(grade){
               <MaterialCommunityIcons
                 name='emoticon-happy-outline'
                 color='#4f83cc' 
-                size={45}
+                size={size}
               />
             </View>
           )

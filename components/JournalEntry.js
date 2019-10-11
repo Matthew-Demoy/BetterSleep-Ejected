@@ -383,11 +383,11 @@ class JournalEntry extends React.Component{
                 />
 
                 <View style={{alignSelf:'center'}}>
-                <View style={{alignSelf:'center'}}>
-                  {getGradeIcon(this.state.grade)}
+                <View style={{alignSelf:'center', paddingBottom: 0}}>
+                  {getGradeIcon(this.state.grade, 90)}
                 </View>
           
-                <Text style={styles.basicText}>How was your day?</Text>
+                <Text style={{fontSize:40}}>How was your day?</Text>
                 </View>
                 <View style={styles.row}>
                   <TouchableOpacity style={styles.gradeButton} onPress={this.onLousyButtonPrs}>
@@ -401,57 +401,70 @@ class JournalEntry extends React.Component{
                   </TouchableOpacity>
                 </View>
                 
-                <View style={styles.row}>
-                  <Text style={{fontSize:18, paddingLeft:10}}>Did you perform a daily exercise?</Text>
-                  <Switch onValueChange={this.exerciseSwitch} value={this.state.didExercise}/>
-                </View>
-                
-                <View style={styles.row}>
-                  <Text style={{fontSize:18, paddingLeft:10}}>Did you follow your nutrition?</Text>
-                  <Switch onValueChange={this.nutritionSwitch} value={this.state.didNutrition}/>
-                </View>
-
-                <Text style={{fontSize:18, paddingLeft:10}} style={styles.basicText}>What about your day went well?</Text>
-                <TextInput multiline={true} numberOfLines = {4} placeholder="You may journal here" style={{height: 40,borderColor:'gray', fontSize:20, borderWidth: 1, height: Math.max(35, this.state.height)}}
-                  onChangeText={(text) => this.setState({text})} value={this.state.text}
-                  onContentSizeChange={(event) => {
-                    this.setState({ height: event.nativeEvent.contentSize.height })
-                  }}>
+                <View style={{marginVertical:20}}>
+                  <View style={styles.dailyQuestions}>
+                    <Text style={{fontSize:18, paddingLeft:10}}>Did you perform a daily exercise?</Text>
+                    <Switch onValueChange={this.exerciseSwitch} value={this.state.didExercise}/>
+                  </View>
                   
-                </TextInput>
-
-                <View styles={styles.row}>
-                    <Text>When did you wake up?</Text>
-                    <DatePicker
-                        style={{width: 200}}
-                        date={this.state.wakeTime}
-                        mode="time"
-                        format="h:mm A"
-                        confirmBtnText="Confirm"
-                        cancelBtnText="Cancel"
-                        minuteInterval={10}
-                        onDateChange={(time) => {this.setState({wakeTime:time})}}
-                    />
-
-                    <Text>When did you go to sleep?</Text>
-                    <DatePicker
-                        style={{width: 200}}
-                        date={this.state.bedTime}
-                        mode="time"
-                        format="h:mm A"
-                        confirmBtnText="Confirm"
-                        cancelBtnText="Cancel"
-                        minuteInterval={10}
-                        onDateChange={(time) => {this.setState({bedTime:time})}}
-                    />
+                  <View style={styles.dailyQuestions}>
+                    <Text style={{fontSize:18, paddingLeft:10}}>Did you follow your nutrition?</Text>
+                    <Switch onValueChange={this.nutritionSwitch} value={this.state.didNutrition}/>
+                  </View>
                 </View>
 
-                <Button
-                  title="Submit"
-                  color="#27A8E6"
-                  accessibilityLabel="Learn more about this purple button"
-                  onPress={this.submit.bind(itemId,this.state.itemId)}
-                />
+
+                <Text style={{fontSize:20, paddingLeft:10, alignSelf: "center"}} >What about your day went well?</Text>
+                
+                  <View style={{height:10}} />
+                  <TextInput multiline={true} numberOfLines = {4} placeholder=" You may journal here" style={{marginHorizontal: 10, paddingHorizontal: 10, borderColor:'gray', fontSize:20,borderRadius: 5, backgroundColor: 'lightgray', height: Math.max(100, this.state.height)}}
+                    onChangeText={(text) => this.setState({text})} value={this.state.text}
+                    onContentSizeChange={(event) => {
+                      this.setState({ height: event.nativeEvent.contentSize.height })
+                    }}>
+                  </TextInput>
+
+                <Text style={{fontSize:20, alignSelf:"center", marginVertical: 10}}>When did you Wake up and Sleep?</Text>
+                <View style={styles.row}>
+                    <View style={{alignItems:"center"}}>
+                      <Text >Wake up</Text>
+                      <DatePicker
+                          style={{width: 100}}
+                          date={this.state.wakeTime}
+                          mode="time"
+                          format="h:mm A"
+                          confirmBtnText="Confirm"
+                          cancelBtnText="Cancel"
+                          minuteInterval={10}
+                          onDateChange={(time) => {this.setState({wakeTime:time})}}
+                      />
+                    </View>
+                    
+                    <View style={{alignItems:"center"}}>
+                      <Text>Sleep</Text>  
+                      <DatePicker
+                          style={{width: 100}}
+                          date={this.state.bedTime}
+                          mode="time"
+                          format="h:mm A"
+                          confirmBtnText="Confirm"
+                          cancelBtnText="Cancel"
+                          minuteInterval={10}
+                          onDateChange={(time) => {this.setState({bedTime:time})}}
+                      />
+                    </View>
+                </View>
+
+                <View>
+                
+                <View style={{alignItems:"center"}}>
+                  <TouchableOpacity style={styles.gradeButton} accessibilityLabel="Learn more about this purple button"onPress={this.submit.bind(itemId,this.state.itemId)}>
+                        <Text style={styles.basicText} >Submit</Text>
+                    </TouchableOpacity>
+                </View>
+
+                </View>
+
 
             </ScrollView>
             </KeyboardAvoidingView>
@@ -474,9 +487,13 @@ export default connect(mapStateToProps)(JournalEntry);
 
 const styles = StyleSheet.create({
     gradeButton: {
-        backgroundColor: '#fff',
+        backgroundColor: '#27A8E6',
         marginTop: 12,
         height: 50,
+        width:'30%',
+      justifyContent: 'center',
+      alignItems:'center',
+      borderRadius: 10
     },
     iconContainer: {
         flexDirection: 'row',
@@ -486,8 +503,17 @@ const styles = StyleSheet.create({
       row: {
         justifyContent: 'space-evenly',
         flexDirection: 'row',
+        flex: 1,
       },
       basicText : {
-        fontSize:18
+        fontSize:20,
+        color: 'white',
+        fontWeight: "bold",
+      },
+      dailyQuestions: {
+        justifyContent: 'space-between',
+        flexDirection: 'row',
+        marginHorizontal: 5,
+        marginTop: 5
       }
 })

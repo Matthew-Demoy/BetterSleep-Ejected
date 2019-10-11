@@ -253,31 +253,35 @@ export class Schedule extends React.Component{
 
     render(){
         return(
-            <View styles={styles.row}>
+            <View style={styles.row}>
+                <View style={styles.rowInner}>
+                    <Text style={{fontSize: 18}}>Night Reminder</Text>
+                    <DatePicker
+                        style={{width: "80%", marginVertical: 5}}
+                        date={this.state.eveningTime}
+                        mode="time"
+                        format="h:mm A"
+                        confirmBtnText="Confirm"
+                        cancelBtnText="Cancel"
+                        minuteInterval={1}
+                        onDateChange={this.changeEveningTime}
+                    />
+                </View>
+                
+                <View style={styles.rowInner}>
+                    <Text style={{fontSize: 18}}>Morning Reminder</Text>
+                    <DatePicker
+                        style={{width: "80%", marginVertical: 5}}
+                        date={this.state.morningTime}
+                        mode="time"
+                        format="h:mm A"
+                        confirmBtnText="Confirm"
+                        cancelBtnText="Cancel"
+                        minuteInterval={1}
+                        onDateChange={this.changeMorningTime}
+                    />
+                </View>
 
-                <Text>Night check in Reminder</Text>
-                <DatePicker
-                    style={{width: 200}}
-                    date={this.state.eveningTime}
-                    mode="time"
-                    format="h:mm A"
-                    confirmBtnText="Confirm"
-                    cancelBtnText="Cancel"
-                    minuteInterval={1}
-                    onDateChange={this.changeEveningTime}
-                />
-
-                <Text>Morning Journal Reminder</Text>
-                <DatePicker
-                    style={{width: 200}}
-                    date={this.state.morningTime}
-                    mode="time"
-                    format="h:mm A"
-                    confirmBtnText="Confirm"
-                    cancelBtnText="Cancel"
-                    minuteInterval={1}
-                    onDateChange={this.changeMorningTime}
-                />
             </View>
         )
     } 
@@ -287,8 +291,10 @@ export class Schedule extends React.Component{
 const styles = StyleSheet.create({
     row: {
         flexDirection: 'row',
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center', 
+        justifyContent: "space-evenly",
+        marginHorizontal: 10
+      },
+      rowInner: {
+          alignItems: "center",
       }
 })

@@ -48,18 +48,17 @@ class Profile extends React.Component{
             <ScrollView>
                 <View style={{paddingTop:10}} />
                 <StreakCalendar/>
-                <View style={{paddingTop:10}} />
                 <StatBox/>
                 <View style={{paddingTop:10}} />
 
                 <Schedule navigation={this.props.navigation}/>
 
-                <TouchableOpacity style={{borderWidth:1, paddingVertical:15}} onPress={this.onSettingsPress}>
-                    <Text style={{alignSelf:'center', fontSize:20}}>Settings</Text>
+                <TouchableOpacity style={styles.blueButton} onPress={this.onSettingsPress}>
+                    <Text style={{alignSelf:'center',color:'white', fontSize:20}}>Settings</Text>
                 </TouchableOpacity>
                 <View style={{paddingTop:10}} />
-                <TouchableOpacity style={{borderWidth:1, paddingVertical:15}} onPress={this.onSignoutPress}>
-                    <Text style={{alignSelf:'center', fontSize:20}}>Sign Out</Text>
+                <TouchableOpacity style={styles.blueButton} onPress={this.onSignoutPress}>
+                    <Text style={{alignSelf:'center', fontSize:20, color:'white',}}>Sign Out</Text>
                 </TouchableOpacity>
 
             </ScrollView>
@@ -87,6 +86,16 @@ const styles = StyleSheet.create({
     ScreenTitle: {
         color: 'white',
         fontSize : 25,  
+    },
+    blueButton: {
+        backgroundColor: '#27A8E6',
+        marginTop: 5,
+        height: 50,
+        width:'90%',
+      justifyContent: 'center',
+      alignItems:'center',
+      alignSelf: 'center',
+      borderRadius: 10
     },
 
 })

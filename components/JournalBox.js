@@ -14,12 +14,14 @@ class JournalBox extends React.PureComponent {
   };
   render() {
     return (
-      <View style={styles.outerBox}>
+      <View>
         <TouchableOpacity style={styles.roundBox} onPress={this._onPress}>
-          <View style={{ borderColor: 'white'}}>
+          <View style={{ borderColor: 'white', marginHorizontal: 10}}>
             <View style={[styles.row, {marginTop:12}]}>
-                {getGradeIcon(this.props.grade)}
-                <CleanDate date={this.props.date}/>
+                {getGradeIcon(this.props.grade, 45)}
+                <View style={{marginLeft: 10, marginTop: -15}}>
+                  <CleanDate date={this.props.date}/>
+                </View>
                 <View style={styles.iconContainer}>
                   {getExerciseIcon(this.props.didExercise)}
                   {getNutritionIcon(this.props.didNutrition)}
@@ -28,6 +30,7 @@ class JournalBox extends React.PureComponent {
               <Text style={styles.journalText}>{this.props.journal}</Text>
             </View>
         </TouchableOpacity>
+        <View style={styles.bottomBar}></View>
       </View>
     );
   }
@@ -194,8 +197,15 @@ const styles = StyleSheet.create({
   },
   roundBox: {
     paddingBottom: 10,
-    borderBottomWidth: 5,
-    borderColor: 'grey'
+    //borderBottomWidth: 2,
+    //borderColor: 'grey',
+
+  },
+  bottomBar: {
+    width: "90%",
+    alignSelf: 'center',
+    borderColor: "lightgray",
+    borderBottomWidth: 1,
   },
   outerBox:{
     
