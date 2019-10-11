@@ -4,15 +4,18 @@
   <a href="https://github.com/Matthew-Demoy/BetterSleep-Ejected">
     <img src="assets/Icon/images/LoginIcon.png" alt="Logo" width="160" height="160">
   </a>
-
+  
   <h3 align="center">BetterSleep</h3>
 
   <p align="center">
     The Pocket Sleep Journal
     <br />
     <a href="https://github.com/github_username/repo">
+      
   </p>
+  
 </p>
+
 
 
 
